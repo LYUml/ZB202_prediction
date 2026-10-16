@@ -1,0 +1,9 @@
+{
+  "name": "zb202-prediction",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=20"},
+  "scripts": {"export": "node scripts/export-influx.mjs"},
+  "dependencies": {"dotenv": "^17.2.1", "@influxdata/influxdb-client": "^1.35.0"}
+}

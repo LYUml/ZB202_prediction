@@ -1,0 +1,491 @@
+{
+  "rows": 949752,
+  "earliest_utc": "2026-08-13T09:42:35.323637Z",
+  "latest_utc": "2026-10-16T09:22:20Z",
+  "measurements": {
+    "AM103_05": 73117,
+    "AM103_06": 73101,
+    "AM103_07": 73076,
+    "AM103_08": 73060,
+    "AM308_01": 91290,
+    "VS341_01": 818,
+    "VS341_02": 319,
+    "VS341_03": 224,
+    "VS341_04": 110,
+    "VS341_05": 198,
+    "VS341_06": 246,
+    "VS341_07": 178,
+    "VS341_08": 192,
+    "VS341_09": 130,
+    "VS341_10": 210,
+    "WS301_01": 507,
+    "WS301_02": 221,
+    "WS301_03": 230,
+    "WS302_01": 29083,
+    "WS302_02": 36571,
+    "WS303_01": 130,
+    "WS523_01": 423102,
+    "WS523_02": 21405,
+    "WS523_03": 30823,
+    "WS523_04": 21411
+  },
+  "fields": [
+    {
+      "measurement": "AM103_05",
+      "field": "battery_pct",
+      "rows": 18279
+    },
+    {
+      "measurement": "AM103_05",
+      "field": "co2_ppm",
+      "rows": 18280
+    },
+    {
+      "measurement": "AM103_05",
+      "field": "relative_humidity_pct",
+      "rows": 18279
+    },
+    {
+      "measurement": "AM103_05",
+      "field": "temperature_c",
+      "rows": 18279
+    },
+    {
+      "measurement": "AM103_06",
+      "field": "battery_pct",
+      "rows": 18275
+    },
+    {
+      "measurement": "AM103_06",
+      "field": "co2_ppm",
+      "rows": 18275
+    },
+    {
+      "measurement": "AM103_06",
+      "field": "relative_humidity_pct",
+      "rows": 18276
+    },
+    {
+      "measurement": "AM103_06",
+      "field": "temperature_c",
+      "rows": 18275
+    },
+    {
+      "measurement": "AM103_07",
+      "field": "battery_pct",
+      "rows": 18269
+    },
+    {
+      "measurement": "AM103_07",
+      "field": "co2_ppm",
+      "rows": 18269
+    },
+    {
+      "measurement": "AM103_07",
+      "field": "relative_humidity_pct",
+      "rows": 18269
+    },
+    {
+      "measurement": "AM103_07",
+      "field": "temperature_c",
+      "rows": 18269
+    },
+    {
+      "measurement": "AM103_08",
+      "field": "battery_pct",
+      "rows": 18265
+    },
+    {
+      "measurement": "AM103_08",
+      "field": "co2_ppm",
+      "rows": 18265
+    },
+    {
+      "measurement": "AM103_08",
+      "field": "relative_humidity_pct",
+      "rows": 18265
+    },
+    {
+      "measurement": "AM103_08",
+      "field": "temperature_c",
+      "rows": 18265
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "battery_pct",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "co2_ppm",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "light_level",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "pir",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "pm10_ugm3",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "pm2_5_ugm3",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "pressure_hpa",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "relative_humidity_pct",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "temperature_c",
+      "rows": 9129
+    },
+    {
+      "measurement": "AM308_01",
+      "field": "tvoc_index",
+      "rows": 9129
+    },
+    {
+      "measurement": "VS341_01",
+      "field": "battery_pct",
+      "rows": 51
+    },
+    {
+      "measurement": "VS341_01",
+      "field": "occupancy",
+      "rows": 767
+    },
+    {
+      "measurement": "VS341_02",
+      "field": "battery_pct",
+      "rows": 51
+    },
+    {
+      "measurement": "VS341_02",
+      "field": "occupancy",
+      "rows": 268
+    },
+    {
+      "measurement": "VS341_03",
+      "field": "battery_pct",
+      "rows": 50
+    },
+    {
+      "measurement": "VS341_03",
+      "field": "occupancy",
+      "rows": 174
+    },
+    {
+      "measurement": "VS341_04",
+      "field": "battery_pct",
+      "rows": 11
+    },
+    {
+      "measurement": "VS341_04",
+      "field": "occupancy",
+      "rows": 99
+    },
+    {
+      "measurement": "VS341_05",
+      "field": "battery_pct",
+      "rows": 51
+    },
+    {
+      "measurement": "VS341_05",
+      "field": "occupancy",
+      "rows": 147
+    },
+    {
+      "measurement": "VS341_06",
+      "field": "battery_pct",
+      "rows": 50
+    },
+    {
+      "measurement": "VS341_06",
+      "field": "occupancy",
+      "rows": 196
+    },
+    {
+      "measurement": "VS341_07",
+      "field": "battery_pct",
+      "rows": 51
+    },
+    {
+      "measurement": "VS341_07",
+      "field": "occupancy",
+      "rows": 127
+    },
+    {
+      "measurement": "VS341_08",
+      "field": "battery_pct",
+      "rows": 50
+    },
+    {
+      "measurement": "VS341_08",
+      "field": "occupancy",
+      "rows": 142
+    },
+    {
+      "measurement": "VS341_09",
+      "field": "battery_pct",
+      "rows": 49
+    },
+    {
+      "measurement": "VS341_09",
+      "field": "occupancy",
+      "rows": 81
+    },
+    {
+      "measurement": "VS341_10",
+      "field": "battery_pct",
+      "rows": 49
+    },
+    {
+      "measurement": "VS341_10",
+      "field": "occupancy",
+      "rows": 161
+    },
+    {
+      "measurement": "WS301_01",
+      "field": "battery_pct",
+      "rows": 67
+    },
+    {
+      "measurement": "WS301_01",
+      "field": "magnet_status",
+      "rows": 373
+    },
+    {
+      "measurement": "WS301_01",
+      "field": "tamper_status",
+      "rows": 67
+    },
+    {
+      "measurement": "WS301_02",
+      "field": "battery_pct",
+      "rows": 67
+    },
+    {
+      "measurement": "WS301_02",
+      "field": "magnet_status",
+      "rows": 87
+    },
+    {
+      "measurement": "WS301_02",
+      "field": "tamper_status",
+      "rows": 67
+    },
+    {
+      "measurement": "WS301_03",
+      "field": "battery_pct",
+      "rows": 67
+    },
+    {
+      "measurement": "WS301_03",
+      "field": "magnet_status",
+      "rows": 96
+    },
+    {
+      "measurement": "WS301_03",
+      "field": "tamper_status",
+      "rows": 67
+    },
+    {
+      "measurement": "WS302_01",
+      "field": "battery_pct",
+      "rows": 7270
+    },
+    {
+      "measurement": "WS302_01",
+      "field": "noise_laeq_db",
+      "rows": 7271
+    },
+    {
+      "measurement": "WS302_01",
+      "field": "noise_lai_db",
+      "rows": 7271
+    },
+    {
+      "measurement": "WS302_01",
+      "field": "noise_laimax_db",
+      "rows": 7271
+    },
+    {
+      "measurement": "WS302_02",
+      "field": "battery_pct",
+      "rows": 9139
+    },
+    {
+      "measurement": "WS302_02",
+      "field": "noise_laeq_db",
+      "rows": 9144
+    },
+    {
+      "measurement": "WS302_02",
+      "field": "noise_lai_db",
+      "rows": 9144
+    },
+    {
+      "measurement": "WS302_02",
+      "field": "noise_laimax_db",
+      "rows": 9144
+    },
+    {
+      "measurement": "WS303_01",
+      "field": "battery_pct",
+      "rows": 65
+    },
+    {
+      "measurement": "WS303_01",
+      "field": "leakage_status",
+      "rows": 65
+    },
+    {
+      "measurement": "WS523_01",
+      "field": "active_power",
+      "rows": 70517
+    },
+    {
+      "measurement": "WS523_01",
+      "field": "current",
+      "rows": 70517
+    },
+    {
+      "measurement": "WS523_01",
+      "field": "power_consumption",
+      "rows": 70517
+    },
+    {
+      "measurement": "WS523_01",
+      "field": "power_factor",
+      "rows": 70517
+    },
+    {
+      "measurement": "WS523_01",
+      "field": "socket_status",
+      "rows": 70517
+    },
+    {
+      "measurement": "WS523_01",
+      "field": "voltage",
+      "rows": 70517
+    },
+    {
+      "measurement": "WS523_02",
+      "field": "active_power",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_02",
+      "field": "current",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_02",
+      "field": "power_consumption",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_02",
+      "field": "power_factor",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_02",
+      "field": "socket_status",
+      "rows": 3575
+    },
+    {
+      "measurement": "WS523_02",
+      "field": "voltage",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_03",
+      "field": "active_power",
+      "rows": 5137
+    },
+    {
+      "measurement": "WS523_03",
+      "field": "current",
+      "rows": 5137
+    },
+    {
+      "measurement": "WS523_03",
+      "field": "power_consumption",
+      "rows": 5137
+    },
+    {
+      "measurement": "WS523_03",
+      "field": "power_factor",
+      "rows": 5137
+    },
+    {
+      "measurement": "WS523_03",
+      "field": "socket_status",
+      "rows": 5138
+    },
+    {
+      "measurement": "WS523_03",
+      "field": "voltage",
+      "rows": 5137
+    },
+    {
+      "measurement": "WS523_04",
+      "field": "active_power",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_04",
+      "field": "current",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_04",
+      "field": "power_consumption",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_04",
+      "field": "power_factor",
+      "rows": 3566
+    },
+    {
+      "measurement": "WS523_04",
+      "field": "socket_status",
+      "rows": 3581
+    },
+    {
+      "measurement": "WS523_04",
+      "field": "voltage",
+      "rows": 3566
+    }
+  ],
+  "device_euis": [],
+  "columns": [
+    "",
+    "_field",
+    "_measurement",
+    "_start",
+    "_stop",
+    "_time",
+    "_value",
+    "result",
+    "table"
+  ]
+}
