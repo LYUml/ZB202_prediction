@@ -1,0 +1,28 @@
+{
+  "id": "ZB202",
+  "version": "assumed-v1",
+  "parameters": {
+    "volume_m3": {
+      "value": 300,
+      "unit": "m3",
+      "source": "assumed",
+      "note": "Placeholder only; not extracted from IFC. Replace after room boundary/net height confirmation."
+    },
+    "outdoor_co2_ppm": {
+      "value": 420,
+      "unit": "ppm",
+      "source": "assumed"
+    },
+    "co2_generation_m3_s_person": {
+      "value": 5e-06,
+      "unit": "m3/s/person",
+      "source": "assumed",
+      "note": "Illustrative activity level; not identified from occupancy sensors."
+    },
+    "infiltration_ach": {
+      "value": 0.2,
+      "unit": "1/h",
+      "source": "assumed"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "zb202-prediction",
+  "name": "zb202-influxdb",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,9 +7,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "data:export": "node scripts/ingestion/export-influx.mjs",
-    "data:verify": "node scripts/validation/verify-influx-counts.mjs",
-    "data:inspect": "python3 scripts/validation/inspect-export.py"
+    "data:export": "node scripts/export.mjs",
+    "data:verify": "node scripts/verify.mjs"
   },
   "dependencies": {
     "dotenv": "^17.2.1",

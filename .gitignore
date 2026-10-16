@@ -5,3 +5,6 @@ node_modules/
 .DS_Store
 __pycache__/
 *.partial
+# Reproducible simulation runs; keep documentation tracked.
+data/synthetic/*/
+.venv/

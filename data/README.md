@@ -1,27 +1,28 @@
-# 数据目录约定
+# 数据分层
 
-## raw：原始数据
+| 目录 | 内容 | 规则 |
+| --- | --- | --- |
+| `raw/zb202_iot/<snapshot>/` | 真实 InfluxDB 导出及核验元数据 | 不清洗、不修改原始 CSV |
+| `raw/reference/bim/` | 用户提供的三个 IFC | 空间参考；不保证工程准确性 |
+| `raw/reference/ahu/` | 用户提供的 AHU 截图 | 单次读数，观测时间未知 |
+| `processed/zb202_iot/` | 真实数据的清洗、对齐及特征结果 | 当前尚未生成；必须记录输入和处理方法 |
+| `synthetic/<run>/` | 模拟模型生成的记录 | 必须标记 synthetic；不能混作实测数据 |
 
-路径：`raw/zb202_iot/<snapshot>/`。快照名为导出开始时刻（UTC），每次导出创建独立目录。
+## 原始 IoT 快照
 
-当前快照 `2026-10-16T09-22-35.747Z`：949,752 条字段观测，实际时间范围为 2026-08-13T09:42:35.323637Z 至 2026-10-16T09:22:20Z。
+当前快照：`2026-10-16T09-22-35.747Z`，949,752 条字段观测。
+实际时间范围：2026-08-13T09:42:35.323637Z 至 2026-10-16T09:22:20Z。
 
-| 文件 | 用途 |
-| --- | --- |
-| `zb202_iot.csv.gz` | 原始 InfluxDB annotated CSV，保留精度、类型及标签 |
-| `manifest.json` | 来源、查询范围、状态、记录数及 SHA-256 |
-| `server-counts.json` | 同一范围的服务器独立计数 |
-| `zb202_iot-earliest.csv` | 服务器最早时间查询结果 |
-| `zb202_iot-summary.json` | 原始数据核验摘要与 measurement/field 清单 |
+- `zb202_iot.csv.gz`：原始 InfluxDB annotated CSV，保留时间精度、类型与标签。
+- `manifest.json`：来源、查询范围、状态、记录数及 SHA-256。
+- `server-counts.json`：同一范围的服务器独立计数。
+- `zb202_iot-earliest.csv`：最早时间查询结果。
+- `zb202_iot-summary.json`：核验摘要与字段清单。
 
-原始数据文件不做清洗、降采样、插值或覆盖。核验工具可更新同目录的元数据与摘要。CSV 一行是一个字段观测，不是一次完整设备上报；文件含多段表头，读取方法见 `scripts/validation/inspect-export.py`。
+CSV 一行是一个字段值，不是完整设备上报；包含多段表头，读取示例见 `scripts/validation/inspect-export.py`。查询覆盖 Unix epoch 至统一截止时间，仅含服务器当时仍保留的数据。核验工具可更新元数据与摘要，但不改原始压缩文件。
 
-查询覆盖 Unix epoch 至统一截止时间，仅包括服务器当时仍保留的可读取记录。
+## 衍生数据追溯
 
-## processed：处理后的数据
+processed 推荐使用 `<snapshot>/<pipeline-version>/`，附 manifest 记录输入文件及哈希、处理版本、参数、字段、时间范围和行数。
 
-路径：`processed/zb202_iot/<snapshot>/<pipeline-version>/`。
-
-目前尚无处理后的数据，只预留目录。后续清洗、时间对齐、重采样、缺失值处理与特征生成的结果放在这里，不能写回 raw。
-
-每份处理结果应附 `manifest.json`，记录输入快照及 SHA-256、处理版本、参数、输出字段、时间范围和行数，以便追溯和重新生成。具体处理规则在建模前根据字段含义确定。
+synthetic 每次运行独立存储，manifest 保存完整配置、代码与输入哈希、输出校验和。默认不上传生成目录；原始参考文件的哈希见 `raw/reference/manifest.json`。

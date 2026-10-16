@@ -1,0 +1,48 @@
+{
+  "id": "AHU-LG1-10",
+  "version": "assumed-v1",
+  "reference": "data/raw/reference/ahu/ahu-lg1-10.jpg",
+  "reference_observation_time": null,
+  "snapshot_only": {
+    "damper_command_pct": 30,
+    "damper_position_pct": 11,
+    "supply_airflow_l_s": 8168,
+    "supply_temperature_c": 22.3,
+    "return_temperature_c": 23.4,
+    "chilled_water_valve_command_pct": 51,
+    "chilled_water_valve_feedback_pct": 48,
+    "fan_command_pct": 60,
+    "fan_frequency_hz": 40,
+    "on": true,
+    "auto": true
+  },
+  "parameters": {
+    "zone_supply_airflow_m3_s": {
+      "value": 0.5,
+      "unit": "m3/s",
+      "source": "assumed",
+      "note": "Illustrative room allocation, deliberately not inferred from screenshot total supply flow."
+    },
+    "damper_time_constant_s": {
+      "value": 120,
+      "unit": "s",
+      "source": "assumed"
+    },
+    "outdoor_fraction_closed": {
+      "value": 0.02,
+      "unit": "fraction",
+      "source": "assumed"
+    },
+    "outdoor_fraction_open": {
+      "value": 0.6,
+      "unit": "fraction",
+      "source": "assumed"
+    },
+    "damper_curve_exponent": {
+      "value": 1.5,
+      "unit": "dimensionless",
+      "source": "assumed"
+    }
+  },
+  "model": "outdoor_fraction = closed + (open - closed) * (position_pct / 100) ** exponent; illustrative fixed-fan mapping, not a calibrated pressure-flow model"
+}

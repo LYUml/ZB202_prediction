@@ -1,0 +1,24 @@
+{
+  "references": [
+    {
+      "file": "data/raw/reference/bim/lab-archi.ifc",
+      "sha256": "a5405d4124a0cf93d413f0191b5f61547e7099d24fdaf87d65d51429cef73cb5",
+      "source": "User-provided IFC; spatial reference only; engineering accuracy unverified"
+    },
+    {
+      "file": "data/raw/reference/bim/lab-mep.ifc",
+      "sha256": "f9c0e8dd10431fc03a47497f159dc7baf8058128c9c21438dd67ef52bdb38526",
+      "source": "User-provided IFC; spatial reference only; engineering accuracy unverified"
+    },
+    {
+      "file": "data/raw/reference/bim/lab-sensor.ifc",
+      "sha256": "060d6b6a17ba7800d4e471fcb4eee0d7aac0721588934ed52e2b6278617d4190",
+      "source": "User-provided IFC; spatial reference only; engineering accuracy unverified"
+    },
+    {
+      "file": "data/raw/reference/ahu/ahu-lg1-10.jpg",
+      "sha256": "0ad9454d564fdf6b9ac400df28bfc583a97c54b9aaaf57e388680181e98d3c5a",
+      "source": "User-provided BA screenshot; observation time unknown"
+    }
+  ]
+}

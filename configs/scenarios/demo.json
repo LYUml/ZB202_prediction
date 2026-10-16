@@ -1,0 +1,43 @@
+{
+  "id": "demo-occupied-room",
+  "version": "1",
+  "duration_minutes": 180,
+  "step_seconds": 60,
+  "initial_co2_ppm": 800,
+  "initial_damper_position_pct": 11,
+  "schedule": [
+    {
+      "minute": 0,
+      "occupants": 0
+    },
+    {
+      "minute": 30,
+      "occupants": 8
+    },
+    {
+      "minute": 120,
+      "occupants": 0
+    }
+  ],
+  "strategies": [
+    {
+      "id": "fixed-30",
+      "type": "fixed",
+      "command_pct": 30
+    },
+    {
+      "id": "fixed-60",
+      "type": "fixed",
+      "command_pct": 60
+    },
+    {
+      "id": "co2-feedback",
+      "type": "proportional",
+      "target_ppm": 800,
+      "gain_pct_per_ppm": 0.2,
+      "minimum_pct": 10,
+      "maximum_pct": 100
+    }
+  ],
+  "note": "All occupancy, controller targets and initial state are assumed; no real history replay or BA control."
+}
