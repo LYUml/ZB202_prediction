@@ -1,22 +1,36 @@
 # ZB202 Prediction
 
-ZB202 房间预测与模拟项目。目前包含 `zb202_iot` 原始历史快照和导出、核验工具，尚未训练预测模型。
+ZB202 房间预测与模拟项目。目前完成 `zb202_iot` 历史数据导出和完整性核验，尚未执行建模预处理或训练预测模型。
 
-## 数据
+## 目录
 
-见 [data/README.md](data/README.md)。当前快照包含 949,752 条字段观测记录，原始 CSV 使用 gzip 压缩，已纳入 Git。
+```text
+ZB202_prediction/
+├── data/
+│   ├── raw/zb202_iot/<snapshot>/    # 原始快照及其来源、校验元数据
+│   └── processed/zb202_iot/        # 后续清洗、对齐及特征处理结果
+├── scripts/
+│   ├── ingestion/                 # 从 InfluxDB 导出
+│   └── validation/                # 服务器计数与本地完整性核验
+├── .env.example                   # 连接配置模板
+└── package.json                   # 依赖及命令入口
+```
 
-## 重新导出
+当前原始快照包含 949,752 条字段观测记录。压缩原始数据已纳入 Git，clone 后即可读取。数据约定见 [data/README.md](data/README.md)。
 
-需要 Node.js 20+ 和 Python 3。
+## 使用
+
+需要 Node.js 20+ 和 Python 3。在项目根目录运行：
 
 ```sh
 npm ci
 cp .env.example .env
 # 在 .env 填写真实连接配置和 Token
-npm run export
-node scripts/verify-influx-counts.mjs data/<新快照目录>
-python3 scripts/inspect-export.py data/<新快照目录>
+npm run data:export
+npm run data:verify -- data/raw/zb202_iot/<snapshot>
+npm run data:inspect -- data/raw/zb202_iot/<snapshot>
 ```
 
-也可通过 `ZB202_ENV_FILE` 指定现有 .env 的路径。凭据不提交到 Git。脚本仅导出 `zb202_iot`，不操作设备。
+`<snapshot>` 替换为实际快照文件夹名。导出时自动创建新快照，不覆盖旧数据。核验可用于已有快照，无需重新导出。
+
+也可通过 `ZB202_ENV_FILE` 指定现有 `.env`。凭据不提交到 Git。脚本只读取 `zb202_iot`，不操作设备。

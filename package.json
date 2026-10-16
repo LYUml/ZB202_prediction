@@ -3,7 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": {"node": ">=20"},
-  "scripts": {"export": "node scripts/export-influx.mjs"},
-  "dependencies": {"dotenv": "^17.2.1", "@influxdata/influxdb-client": "^1.35.0"}
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "data:export": "node scripts/ingestion/export-influx.mjs",
+    "data:verify": "node scripts/validation/verify-influx-counts.mjs",
+    "data:inspect": "python3 scripts/validation/inspect-export.py"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "@influxdata/influxdb-client": "^1.35.0"
+  }
 }

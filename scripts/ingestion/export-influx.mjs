@@ -6,7 +6,7 @@ import { createGzip } from 'node:zlib';
 import dotenv from 'dotenv';
 dotenv.config({path: process.env.ZB202_ENV_FILE || '.env', quiet:true});
 const e=process.env, q=JSON.stringify;
-const root=path.resolve('data',new Date().toISOString().replaceAll(':','-'));
+const root=path.resolve('data','raw','zb202_iot',new Date().toISOString().replaceAll(':','-'));
 fs.mkdirSync(root,{recursive:true});
 const stop=new Date().toISOString();
 const sources=[{bucket:'zb202_iot',token:e.ZB202_INFLUX_TOKEN}];
