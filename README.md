@@ -35,7 +35,7 @@ tests/                      物理守恒及模拟行为检查
 
 ```sh
 python3 scripts/simulate.py
-python3 -m unittest discover -s tests -v
+python3 -m unittest discover -s tests -p test_simulation.py -v
 ```
 
 默认情景为 3 小时，比较固定 30%、固定 60% 和 CO₂ 比例反馈三种策略。结果写入 `data/synthetic/<run>/`；CSV 每行表示一个区间，区分区间起止 CO₂、指令、实际开度和平均新风量。
@@ -65,3 +65,26 @@ python3 scripts/validation/inspect-export.py data/raw/zb202_iot/<snapshot>
 `<snapshot>` 替换为实际快照名。核验路径以项目根目录为基准。导出自动写入项目的 `data/raw/zb202_iot/`，不受运行目录影响。支持用 `ZB202_ENV_FILE` 指定其他配置文件；真实凭据不提交 Git。
 
 当前真实快照有 949,752 条字段观测。详细约定见 [数据说明](data/README.md)、[架构说明](docs/architecture.md) 和 [参数假设](docs/assumptions.md)。
+
+## 项目主计划与真实数据预测
+
+完整思路、物理模型、预测方案、数据边界和阶段顺序见 [PROJECT_PLAN.md](PROJECT_PLAN.md)。
+
+真实预测模块采用多变量直接多步 TCN：输入过去 4 小时，预测未来 1 小时的五个 CO₂ 点位。当前先实施 TCN 与持续值对照；LSTM、PIAD-SRNN、滚动验证和 MPC 按主计划后续推进。
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-forecasting.txt
+# 仅准备数据
+.venv/bin/python scripts/forecast.py prepare
+# 训练、验证早停，最后评估一次测试集
+.venv/bin/python scripts/forecast.py train
+# 包含预测与物理模型的完整检查
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+`requirements-forecasting-lock.txt` 记录首轮本机 Python 3.13 / macOS arm64 环境的精确版本；其他平台建议先用通用 requirements 安装。预测配置在 `configs/forecasting/tcn.json`。
+
+处理数据写入 `data/processed/`，权重、预测与 manifest 写入 `artifacts/forecasting/`，审阅报告写入 `reports/forecasting/`。处理数据和模型产物默认不提交 Git。每次训练可能耗时数分钟，首轮单次划分结果不等于最终模型验证。
+
+只运行无额外依赖的物理模型检查时，使用 `python3 -m unittest discover -s tests -p test_simulation.py -v`。

@@ -41,3 +41,9 @@ C 为 ppm；N 为假设人数；G 为 m³/s/人；V 为 m³；Q 为 m³/s。每�
 三个文件均为 IFC2X3。当前静态检查未发现 IfcSpace 或房间体积数量项；传感器用 23 个 IfcBuildingElementProxy 表达。MEP 有端口、系统和送回风口类型，但不等于经过核验的真实气流拓扑。
 
 目前只保存原始文件和哈希，尚未提取房间体积、空间边界或传感器坐标。几何提取后需要确认坐标变换和单位（IFC 长度单位为毫米），传感器对象也需匹配真实设备 ID。渲染模型与计算模型独立维护。
+
+## 真实预测模块（2026-10-18 起）
+
+`forecasting/data.py` 从原始 annotated CSV 构造因果五分钟输入及真实观测标签，独立于 synthetic 模拟。`forecasting/tcn.py` 是因果残差 TCN，直接输出全部预测时距；`forecasting/train.py` 负责时间切分、仅训练段标准化、验证早停与最后一次测试。入口为 `scripts/forecast.py`。
+
+完整路线见根目录 PROJECT_PLAN.md；预测网络不接受假阀门值作为真实控制输入，不用于反事实 AHU 决策。

@@ -8,3 +8,6 @@ __pycache__/
 # Reproducible simulation runs; keep documentation tracked.
 data/synthetic/*/
 .venv/
+# Derived datasets and model checkpoints are reproducible.
+data/processed/zb202_iot/*/
+artifacts/
