@@ -5,7 +5,7 @@
 | `raw/zb202_iot/<snapshot>/` | 真实 InfluxDB 导出及核验元数据 | 不清洗、不修改原始 CSV |
 | `raw/reference/bim/` | 用户提供的三个 IFC | 空间参考；不保证工程准确性 |
 | `raw/reference/ahu/` | 用户提供的 AHU 截图 | 单次读数，观测时间未知 |
-| `processed/zb202_iot/` | 真实数据的清洗、对齐及特征结果 | 当前尚未生成；必须记录输入和处理方法 |
+| `processed/zb202_iot/` | 真实数据的清洗、对齐及特征结果 | 已实现因果对齐；生成结果需记录输入和处理方法 |
 | `synthetic/<run>/` | 模拟模型生成的记录 | 必须标记 synthetic；不能混作实测数据 |
 
 ## 原始 IoT 快照
