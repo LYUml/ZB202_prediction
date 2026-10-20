@@ -14,7 +14,9 @@ from .baselines import DirectLSTM, DirectRidge, ridge_design
 from .data import SENSORS, digest, iso, sample_origins
 from .evaluation import predict, scores
 from .features import build_inputs
-from .tcn import TCN
+from .tcn import TCN, IndependentTCN
+from .linear import NLinear, DLinear, MaskAwareLinear
+from .structured import DecompositionStateRNN, RelaxationForecast
 from .windows import Windows
 
 
@@ -54,9 +56,23 @@ def summarize(pred, truth, mask, baseline):
     return result
 
 
+def build_model(kind, input_features, targets, cfg, norm=None):
+    """Construct the same model for fitting and checkpoint inference."""
+    factories = {'tcn': TCN, 'lstm': DirectLSTM, 'independent_tcn': IndependentTCN,
+                 'nlinear': NLinear, 'dlinear': DLinear, 'mask_linear': MaskAwareLinear,
+                 'decomp_srnn': DecompositionStateRNN, 'relaxation': RelaxationForecast}
+    if kind not in factories:
+        raise ValueError('Unknown neural model: ' + kind)
+    if kind == 'relaxation':
+        if norm is None:
+            raise ValueError('Relaxation requires training-only normalization')
+        cfg = dict(cfg, target_mean=norm['target_mean'], target_scale=norm['target_scale'])
+    return factories[kind](input_features, targets, cfg)
+
+
 def fit_neural(kind, x, current, y, origins, cfg, norm, seed):
     random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
-    model = (TCN if kind == 'tcn' else DirectLSTM)(x.shape[1], len(SENSORS), cfg)
+    model = build_model(kind, x.shape[1], current.shape[1], cfg, norm)
     loaders = {k: DataLoader(Windows(x, current, y, idx, cfg), batch_size=cfg['batch_size'],
                              shuffle=k == 'train', num_workers=0) for k, idx in origins.items()}
     mean, scale = np.array(norm['target_mean']), np.array(norm['target_scale'])

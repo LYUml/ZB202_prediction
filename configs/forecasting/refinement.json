@@ -1,0 +1,9 @@
+{
+  "base_run": "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad",
+  "features": "co2_only",
+  "model": "tcn",
+  "maximum_epochs": 24,
+  "patience": 3,
+  "seeds": [42, 43, 44],
+  "notes": "Refit only runs truly truncated by the old epoch cap. Preserve every other parameter; assert identical original inner-history prefix. Reuse already early-stopped checkpoints. No old-test access; fixed three-seed average."
+}

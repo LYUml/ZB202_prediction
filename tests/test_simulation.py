@@ -43,6 +43,22 @@ class PhysicsTests(unittest.TestCase):
         for before, after in zip(low, low[1:]):
             self.assertEqual(before['co2_end_ppm'], after['co2_start_ppm'])
 
+    def test_ba_envelope_rejects_out_of_range_policies(self):
+        room,ahu,scenario=[json.loads((ROOT/p).read_text()) for p in ['configs/room.json','configs/ahu.json','configs/scenarios/demo.json']]
+        with self.assertRaises(ValueError):
+            simulate(room,ahu,scenario,{'id':'unsafe','type':'fixed','command_pct':60})
+        with self.assertRaises(ValueError):
+            simulate(room,ahu,scenario,{'id':'latent-violation','type':'proportional','minimum_pct':10,'maximum_pct':40,'target_ppm':800,'gain_pct_per_ppm':.2})
+        for policy in scenario['strategies']:
+            rows=simulate(room,ahu,scenario,policy)
+            self.assertTrue(all(20<=r['damper_command_pct']<=40 for r in rows))
+            self.assertTrue(all(r['fan_command_baseline_pct']==60 for r in rows))
+
+    def test_mass_balance_cannot_identify_jointly_scaled_volume_source_and_flow(self):
+        first=advance(800,420,300,20,5e-6,.3,3600)
+        scaled=advance(800,420,600,40,5e-6,.6,3600)
+        self.assertAlmostEqual(first,scaled,places=12)
+
 
 if __name__ == '__main__':
     unittest.main()

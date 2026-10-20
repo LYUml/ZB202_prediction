@@ -44,3 +44,18 @@ class TCN(nn.Module):
         hidden = self.encoder(x.transpose(1, 2))[:, :, -1]
         delta = self.head(hidden).reshape(-1, self.horizon, self.targets)
         return current[:, None, :] + delta
+
+
+class IndependentTCN(nn.Module):
+    """Five separately parameterized local models; input order is CO2/mask/age/calendar."""
+    def __init__(self, input_features, targets, config):
+        super().__init__()
+        if input_features != targets * 3 + 4:
+            raise ValueError('IndependentTCN requires CO2-only feature order')
+        self.targets = targets
+        self.models = nn.ModuleList([TCN(7, 1, config) for _ in range(targets)])
+
+    def forward(self, x, current):
+        return torch.cat([model(x[:, :, [j, self.targets+j, 2*self.targets+j] +
+                                  list(range(3*self.targets, 3*self.targets+4))], current[:, j:j+1])
+                          for j, model in enumerate(self.models)], dim=2)

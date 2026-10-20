@@ -1,0 +1,19 @@
+{
+  "url": "http://influxdb.itf.beeerise.com",
+  "org": "PolyU",
+  "start": "1970-01-01T00:00:00Z",
+  "stop": "2026-10-20T09:22:56.495Z",
+  "format": "InfluxDB annotated CSV, gzip compressed; original field values and tags; no aggregation",
+  "sources": [
+    {
+      "bucket": "zb202_iot",
+      "status": "verified",
+      "file": "zb202_iot.csv.gz",
+      "bytes": 4251520,
+      "rows": 1017502,
+      "earliest_utc": "2026-08-13T09:42:35.323637Z",
+      "latest_utc": "2026-10-20T09:22:44Z",
+      "sha256": "ed5cfeeb088e8f664175ff6d619badb7fc8776066727796a799ce946665614e2"
+    }
+  ]
+}

@@ -2,7 +2,41 @@
 
 更新：2026-10-20。工作区 `/Users/lml/Desktop/ZB202_prediction`。仓库 https://github.com/LYUml/ZB202_prediction.git 。交接前工作区干净，当前 HEAD 为 `9207826`；历史曾被重新整理，不依赖旧聊天中的其他提交编号。
 
-## 最新状态：2026-10-20 输入修复与模型比较已完成
+## 当前最终状态（优先阅读）
+
+本轮持续优化已达到当前数据条件下的实用优选/收益收敛：精简CO₂联合TCN固定42/43/44平均，开发MAE7.435。读取新数据前冻结configs/forecasting/confirmation.json（协议hash d1918285d1a26c9429412d9d01f22423f3fb115507d462e72c2d8622a4eb0bc3），新只读快照2026-10-20T09-22-56.494Z共1017502字段记录，与旧949752完全重叠一致。run20261020T092656Z-confirmation-25df244e：新增1140窗口/61370观测标签项MAE6.56591 vs持续值8.32113（21.1%改善），RMSE8.63401，无负值；AM308 MAE1.926略差于持续值1.744，新段280–721ppm不涵盖尖峰。36项检查通过；原safe/legacy编码完全一致，旧开发、新确认全窗口和最新单窗重放差0ppm。不要基于现已暴露新段再调参并称未见测试。
+
+新增encode_inputs、inference.py FrozenForecaster与forecast.py predict/confirm，真实最新单窗artifacts/forecasting/frozen-tcn-latest-20261020.json（origin09:20Z）；不读未来标签，预测12×5ppm。采样/周期审查artifacts/research/data-contract-audit-20261020/audit.json；AM308十分钟采样，真实未来标签保留空缺，每日/每周复制差，不继续盲调。总报告reports/forecasting/20261020-optimization-conclusion.md。未来项目仍有更长时段确认、BA/空间/分配实测与MPC等；本轮优化完成不等于这些路线图功能完成。无真实写入、无新增依赖、无提交推送。
+
+## 持续目标阶段记录（历史）
+
+最新追加：structured.py实现按时间维递推/批次不变分解RNN与正值一阶松弛；18次拟合run20261020T091842Z-candidates-d1eba57d，固定种子平均MAE7.735/9.022，均未胜TCN7.435。33项代码检查通过、24组指标重算一致、两类checkpoint完整重放差0ppm。新增sensitivity.py和scripts/sensitivity.py、configs/scenarios/sensitivity.json：144组全因子假设×4策略，房间送风0.25/0.5/1/8.168（最后仅极端压力）、体积/排放/执行器/曲线变化，全部20–40、风机60。fixed40仍43/144组分钟末>示例800目标，不能称真实失败概率。产物data/synthetic/2026-10-20T09-19-48-sensitivity-3a9e623f，报告reports/forecasting/20261020-structured-and-allocation-review.md。用户最新答复“不清楚，保留分配比例假设”已落实；没有待答问题。目标仍active；后续新增时段确认、缺测/采样审查、推理入口与模拟控制比较，不能提前宣称总体完成。
+
+用户已明确要求持续优化，GitHub/arXiv多方法对比，可有证据修订模拟假设，直到形成优良方案/收益收敛。goal仍active，不要因本轮阶段完成标记整体完成。工作账本docs/optimization-program.md列出未完成事项。
+
+新增linear.py、candidates.py、candidates.json及forecast.py compare；3模型×3折×3种子27次拟合完成，run20261020T090306Z-candidates-b8727ca7，固定种子平均开发MAE：NLinear8.167、DLinear7.953、缺测感知线性8.021，未胜TCN7.435。三模型需注明输入信息不同。已保存前四个实验的精确source_snapshot（原manifest不改），新run自动保存。
+
+用户新图保存data/raw/reference/ahu/ahu-lg1-10-user-confirmed-20261020.jpg，确认是当前BA基准。明确授权风阀20–40仅模拟，基准30/位置11；风机高低限60因此固定。房间设定26.4，范围22–27，回风设定23；8.168m³/s总送风房间分配用户不清楚，0.5m³/s保留明确假设，不改成总新风。ahu.json/simulation_envelope、demo固定20/30/40和反馈已更新；模拟器拒绝越界策略。实际模拟data/synthetic/2026-10-20T09-13-42-2a075e44，全部synthetic。
+
+训练期6343个五点真实标签箱，相对AM103_05，中位差AM103_06+135、AM103_08−135；不能直接把五点当一个校准混合状态。room.json明确观测映射未建立。V/N/Q同比缩放等价，不能无约束辨识。证据artifacts/research/assumptions-audit-20261020/audit.json。
+
+PIAD源审查固定commit fa1a8121016dfb8b2fdb2b91a2bdc0c4cceb85f8：SSRNN默认分支沿batch维递推，同一输入受前序批次样本影响；数学正权重特例输出2与3。DSSRNN individual分支还有未定义属性/构造不一致。源文件只读保存artifacts/research/piad-srnn-audit-20261020，未导入执行。下一步实现按时间维递推、批次不变的分解状态RNN和稳定松弛候选，并明确不是PIAD原版复现。
+
+30项检查通过；本轮不再评价旧测试，仍无真实BA历史或写入。报告reports/forecasting/20261020-linear-and-ba-review.md。没有提交/推送。
+
+## 上一阶段：进一步优化已完成
+
+以本块为最新进展。四类辅助组（温湿度/占用/门磁/功率）与5个独立参数局部TCN，三折seed42筛选均未优于CO₂联合基线的内部验证均值，按预定规则不追加种子。单种子开发MAE：联合CO₂7.462，温湿度8.198，占用8.115，门磁8.020，功率8.341，独立点位7.678。
+
+固定三个CO₂ TCN预测平均的开发MAE7.435/RMSE10.479；原三种子单模型指标均值7.547/10.626。固定半Ridge混合7.608，内部验证选混合权重7.483，未胜纯TCN平均。注意平均预测误差与误差均值不同。
+
+9个原CO₂拟合中7个已早停；只对rolling-1 seed42和rolling-3 seed44延长上限到24轮，前12轮历史精确复现，均15轮早停、最佳仍12轮，预测与原完全一致。没有新的训练预算收益。新增共17次拟合，25项代码检查通过，本轮未再评估旧测试。
+
+新增入口：forecast.py ablate/combine/refine，对应configs/forecasting/{ablation,ensemble,refinement}.json。报告：reports/forecasting/20261020-further-optimization.md；完整run：20261020T072049Z-ablation-e72eaea5、20261020T072301Z-ensemble-97152589、20261020T073610Z-refinement-12331a92。本地产物在同名artifacts/forecasting目录。
+
+下一步优先冻结联合CO₂/固定种子平均候选，在新增时间段确认；继续重复旧开发集不能提供新的独立泛化证据。PIAD-SRNN/DLinear仍待实现。没有提交/推送。
+
+## 上一轮状态：2026-10-20 输入修复与模型比较已完成
 
 本块优先于下方首轮历史描述。默认safe-v2编码已修复训练未见通道放大问题；旧diagnose显式使用legacy-v1，原权重重放差0ppm。新增baselines.py（LSTM/Ridge）、benchmark.py及benchmark.json；命令`.venv/bin/python scripts/forecast.py benchmark`。
 

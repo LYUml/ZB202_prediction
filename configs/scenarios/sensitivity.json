@@ -1,0 +1,10 @@
+{
+  "base_scenario": "configs/scenarios/demo.json",
+  "zone_supply_airflow_m3_s": [0.25, 0.5, 1.0, 8.168],
+  "volume_m3": [150, 300, 600],
+  "co2_generation_m3_s_person": [0.000003, 0.000005, 0.000007],
+  "damper_time_constant_s": [120, 600],
+  "damper_curve_exponent": [1.0, 2.0],
+  "evaluation_target_ppm": 800,
+  "notes": "144 full-factorial hypothetical stress cases, not measured ranges or probability intervals.8.168m3/s is the extreme assumption that all AHU supply serves the room, included only as sensitivity. Default0.5 is unverified. Outdoor fraction endpoints and infiltration remain fixed. Target800 is illustrative only. No thermal, energy or real control claims."
+}

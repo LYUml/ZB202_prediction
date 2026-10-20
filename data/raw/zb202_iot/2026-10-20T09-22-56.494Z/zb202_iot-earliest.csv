@@ -1,0 +1,6 @@
+#datatype,string,long,dateTime:RFC3339
+#group,false,false,false
+#default,_result,,
+,result,table,_time
+,,0,2026-08-13T09:42:35.323637Z
+

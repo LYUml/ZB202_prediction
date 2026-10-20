@@ -1,7 +1,7 @@
 {
   "id": "AHU-LG1-10",
-  "version": "assumed-v1",
-  "reference": "data/raw/reference/ahu/ahu-lg1-10.jpg",
+  "version": "ba-baseline-assumed-response-v2",
+  "reference": "data/raw/reference/ahu/ahu-lg1-10-user-confirmed-20261020.jpg",
   "reference_observation_time": null,
   "snapshot_only": {
     "damper_command_pct": 30,
@@ -11,17 +11,26 @@
     "return_temperature_c": 23.4,
     "chilled_water_valve_command_pct": 51,
     "chilled_water_valve_feedback_pct": 48,
-    "fan_command_pct": 60,
+    "fan_command_pct": 60.0,
     "fan_frequency_hz": 40,
     "on": true,
-    "auto": true
+    "auto": true,
+    "return_air_setpoint_c": 23.0,
+    "room_setpoint_c": 26.4,
+    "room_setpoint_low_limit_c": 22.0,
+    "room_setpoint_high_limit_c": 27.0,
+    "fan_high_limit_pct": 60.0,
+    "fan_low_limit_pct": 60.0,
+    "flow_switch": "FLOW",
+    "trip_alarm": "Normal",
+    "bypass_on": false
   },
   "parameters": {
     "zone_supply_airflow_m3_s": {
       "value": 0.5,
       "unit": "m3/s",
       "source": "assumed",
-      "note": "Illustrative room allocation, deliberately not inferred from screenshot total supply flow."
+      "note": "Unverified illustrative room allocation. User cannot yet confirm whether total AHU8.168m3/s serves only the modeled area; do not replace this with the full AHU flow or treat0.5 as measured."
     },
     "damper_time_constant_s": {
       "value": 120,
@@ -44,5 +53,36 @@
       "source": "assumed"
     }
   },
-  "model": "outdoor_fraction = closed + (open - closed) * (position_pct / 100) ** exponent; illustrative fixed-fan mapping, not a calibrated pressure-flow model"
+  "model": "outdoor_fraction = closed + (open - closed) * (position_pct / 100) ** exponent; illustrative fixed-fan mapping, not a calibrated pressure-flow model",
+  "baseline_confirmation": {
+    "confirmed_on_local_date": "2026-10-20",
+    "source": "user-confirmed BA operational baseline",
+    "actual_measurement_timestamp_utc": null,
+    "not_synchronized_with_iot": true
+  },
+  "simulation_envelope": {
+    "damper_command_pct": {
+      "minimum": 20.0,
+      "maximum": 40.0,
+      "baseline": 30.0,
+      "source": "user-authorized simulation assumption on 2026-10-20",
+      "measured_equipment_limits": false
+    },
+    "fan_command_pct": {
+      "minimum": 60.0,
+      "maximum": 60.0,
+      "baseline": 60.0,
+      "source": "BA display high/low limits both60%; user confirmed baseline"
+    },
+    "room_setpoint_c": {
+      "minimum": 22.0,
+      "maximum": 27.0,
+      "baseline": 26.4,
+      "source": "BA setpoint display; temperature dynamics not yet implemented"
+    }
+  },
+  "snapshot_units": {
+    "supply_airflow_l_s_to_m3_s": 8.168,
+    "scope": "AHU total supply; outdoor-air fraction and room allocation unmeasured"
+  }
 }

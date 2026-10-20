@@ -6,6 +6,8 @@ ZB202 房间 CO₂ 预测与通风情景模拟项目。目标是结合真实 IoT
 
 ## 当前进度
 
+**当前实用优选：精简CO₂ TCN，固定三个种子预测取平均。** 多方法与假设审查已收敛；新增真实约四天确认MAE6.566ppm，持续值8.321ppm，改善21.1%，零负预测；36项检查通过。AM308点位MAE仍略差于持续值，新段没有极端高浓度，不能据此宣称长期上线或真实控制有效。详见[优化结论与完整比较](reports/forecasting/20261020-optimization-conclusion.md)。
+
 - 已导出并核验 `zb202_iot` 原始快照：949,752 条字段观测。
 - 已保存用户提供的 IFC 与 AHU 截图作为原始参考。
 - 已实现使用明确假设的单房间 CO₂ / AHU 模拟器。
@@ -16,7 +18,11 @@ ZB202 房间 CO₂ 预测与通风情景模拟项目。目标是结合真实 IoT
 
 已修复输入编码并完成持续值/Ridge/TCN/LSTM三折、三种子初筛，见 [修复与比较结果](reports/forecasting/20261020-input-repair-comparison.md)。精简输入TCN的开发MAE为7.55 ppm，持续值9.51 ppm；19项代码检查通过。
 
-后续工作：逐组特征消融、PIAD-SRNN / DLinear、新增时段最终验证、空间参数核实与辨识、多情景 MPC。当前尚未接入 BA，也未完成真实 AHU 响应标定。
+进一步优化已完成特征/点位消融、固定种子平均与训练上限检查，见 [进一步优化结果](reports/forecasting/20261020-further-optimization.md)。固定三种子预测平均的开发MAE为7.44 ppm；新增配置未带来额外改善，25项代码检查通过。
+
+持续优化已补充NLinear/DLinear/缺测感知线性，共27次拟合，尚未优于精简TCN；BA运行基准和用户授权的模拟范围已更新，30项代码检查通过。见[线性模型与BA审查](reports/forecasting/20261020-linear-and-ba-review.md)。
+
+分解状态RNN/稳定松弛候选、144组合成敏感性与新增时段确认均已完成。未来项目阶段：更长未见时段、传感器校准、空间/分配风量辨识、多情景MPC。任务账本见[优化计划](docs/optimization-program.md)。当前尚未接入 BA，也未完成真实 AHU 响应标定。
 
 ## 目录
 
@@ -37,7 +43,15 @@ src/zb202/
 │   ├── train.py            训练、早停和实验产物编排
 │   ├── diagnostics.py      已有运行取证和输入敏感性检查
 │   ├── baselines.py        直接多步LSTM和Ridge
-│   └── benchmark.py        固定协议滚动比较与压力检查
+│   ├── benchmark.py        固定协议滚动比较与压力检查
+│   ├── ablation.py         逐组特征和独立点位试验
+│   ├── ensemble.py         固定种子平均和验证段混合
+│   ├── refinement.py       仅重训被轮数上限截断的模型
+│   ├── linear.py           三类线性候选
+│   ├── structured.py       时间递推分解RNN与正值松弛
+│   ├── candidates.py       扩展候选固定协议编排
+│   ├── inference.py        冻结权重、固定编码、无标签推理
+│   └── confirmation.py     新时段一次性确认与来源留档
 ├── adapters/               模拟输入来源
 ├── models/                 CO₂ 与简化 AHU 物理模型
 ├── controllers.py          固定开度、CO₂ 比例反馈
@@ -74,6 +88,18 @@ python3 -m venv .venv
 .venv/bin/python scripts/forecast.py diagnose
 # 输入修复后的固定预算滚动比较（持续值、Ridge、TCN、LSTM）
 .venv/bin/python scripts/forecast.py benchmark
+# 进一步开发试验（不再评价旧测试段）
+.venv/bin/python scripts/forecast.py ablate
+.venv/bin/python scripts/forecast.py combine
+.venv/bin/python scripts/forecast.py refine
+# 扩展候选（当前含NLinear/DLinear/缺测感知线性）
+.venv/bin/python scripts/forecast.py compare
+# 结构候选（固定开发比较，不读取新增确认段）
+.venv/bin/python scripts/forecast.py compare --config configs/forecasting/structured.json
+# 使用已有本地快照的最新完整历史箱，无需未来标签；output须是新文件
+.venv/bin/python scripts/forecast.py predict --processed data/processed/zb202_iot/2026-10-20T09-22-56.494Z/causal-v1-a91fe5205b53 --output artifacts/forecasting/my-forecast.json
+# 重现已完成的确认（该时段现已暴露；不是又获得一次独立测试）
+.venv/bin/python scripts/forecast.py confirm --snapshot data/raw/zb202_iot/2026-10-20T09-22-56.494Z
 # 完整检查
 .venv/bin/python -m unittest discover -s tests -v
 ```
@@ -90,6 +116,8 @@ lock 文件是首轮 Python 3.13 / macOS arm64 环境的版本快照，不保证
 
 数据写入 `data/processed/`，模型与预测写入 `artifacts/forecasting/<run>/`，报告写入 `reports/forecasting/`。单次时间划分、单种子结果不等于最终验证；当前模型没有学习真实阀门动作的影响。
 
+`predict`使用configs/forecasting/confirmation.json内已冻结权重及哈希，默认取快照导出时最后一个完整五分钟箱；`--origin-utc`可指定带时区的历史箱。模型读48×19输入，输出12×5ppm，掩码/年龄不是额外目标。缺少本地原始数据/权重时须先恢复或重跑相应基准；这些产物默认不随Git发布。当前最新示例在artifacts/forecasting/frozen-tcn-latest-20261020.json。
+
 ## 物理情景模拟
 
 需要 Python 3.10+，模拟器只使用标准库，可独立于预测环境运行：
@@ -100,7 +128,7 @@ python3 scripts/simulate.py --scenario configs/scenarios/demo.json
 python3 -m unittest discover -s tests -p test_simulation.py -v
 ```
 
-默认模拟 3 小时，比较固定 30%、固定 60% 和 CO₂ 比例反馈策略。结果写入 `data/synthetic/<run>/`，包含时间序列、摘要和完整配置/来源记录。
+默认模拟 3 小时，按用户确认的BA基准比较固定20%/30%/40%和范围内CO₂反馈，风机固定60%。风阀20–40是用户授权的模拟假设，不是真实设备写入。结果写入 `data/synthetic/<run>/`，包含时间序列、摘要和完整配置/来源记录。
 
 房间体积、送风量、风阀曲线等仍为明确假设。截图中的 8,168 L/s 只作为 AHU 总送风参考，不直接作为房间新风量。模拟结果不是实测控制效果，累计新风体积也不等于能耗或节能。
 

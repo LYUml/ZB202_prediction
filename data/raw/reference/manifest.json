@@ -19,6 +19,12 @@
       "file": "data/raw/reference/ahu/ahu-lg1-10.jpg",
       "sha256": "0ad9454d564fdf6b9ac400df28bfc583a97c54b9aaaf57e388680181e98d3c5a",
       "source": "User-provided BA screenshot; observation time unknown"
+    },
+    {
+      "file": "data/raw/reference/ahu/ahu-lg1-10-user-confirmed-20261020.jpg",
+      "sha256": "0ad9454d564fdf6b9ac400df28bfc583a97c54b9aaaf57e388680181e98d3c5a",
+      "source": "User-provided BA image; user confirmed as current operational baseline on 2026-10-20; actual measurement timestamp unknown",
+      "confirmed_on_local_date": "2026-10-20"
     }
   ]
 }

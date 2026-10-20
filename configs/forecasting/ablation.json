@@ -1,0 +1,12 @@
+{
+  "base_run": "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad",
+  "screen_seed": 42,
+  "confirmation_seeds": [43, 44],
+  "groups": ["environment", "occupancy", "door", "power"],
+  "independent_channels": 16,
+  "selection_metric": "mean_across_folds_of_best_inner_validation_mae_ppm",
+  "confirmation_gate": "strictly_lower_than_co2_baseline_inner_mae",
+  "maximum_epochs": 12,
+  "patience": 3,
+  "notes": "Only original first 70% development data; never load old-test predictions. Single-group additions, not cumulative selection. At most 27 new fits. Separate local TCN weights; near-matched total parameter count, not an exact architecture-controlled comparison."
+}

@@ -1,0 +1,21 @@
+{
+  "version": "frozen-later-time-v1",
+  "frozen_at_utc": "2026-10-20T09:22:56.135887+00:00",
+  "reference_run": "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad",
+  "models": [
+    "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad/rolling-3-co2_only-tcn-42.pt",
+    "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad/rolling-3-co2_only-tcn-43.pt",
+    "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad/rolling-3-co2_only-tcn-44.pt"
+  ],
+  "sha256": {
+    "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad/rolling-3-co2_only-tcn-42.pt": "19322eec4ed9fbd46865ee06bf1e9c906fcd454986fd5a0011da727816933c41",
+    "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad/rolling-3-co2_only-tcn-43.pt": "7d54d98b82476805ebc346a677cff3dc6379f7aacd1f8845795a9d273974af11",
+    "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad/rolling-3-co2_only-tcn-44.pt": "c47b3e4d18f0fce0b3420329bd29f32ee3f08cc62bf755a1ae55aa5b10afc4bd"
+  },
+  "ensemble": "unweighted arithmetic mean, all3 fixed seeds",
+  "after_utc": "2026-10-16T09:22:35.752Z",
+  "selection": "Latest development fold existing TCN checkpoints; no new fitting or checkpoint choice on new data. Persistence primary paired comparator.",
+  "eligibility": "All12 future target bin starts >=after_utc; four-hour input context may precede cutoff. Existing900s max-age and80%history coverage; no target filling.",
+  "acceptance": "Report all paired MAE/RMSE/horizon/sensor/change/tail/negative counts, improvement sign and daily breakdown. Short follow-up not proof of deployment readiness.",
+  "prohibition": "No new labels for normalization, epoch, seed, blending, clipping or hyperparameter selection. If results disappoint, retain report and require a new confirmation period for later changes."
+}

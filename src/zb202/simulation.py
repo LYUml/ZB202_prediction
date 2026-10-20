@@ -39,6 +39,16 @@ def load(path):
 def simulate(room, ahu, scenario, policy):
     r = {k: v['value'] for k, v in room['parameters'].items()}
     a = {k: v['value'] for k, v in ahu['parameters'].items()}
+    envelope = ahu.get('simulation_envelope', {}).get('damper_command_pct', {})
+    minimum, maximum = envelope.get('minimum', 0), envelope.get('maximum', 100)
+    if not 0 <= minimum <= maximum <= 100:
+        raise ValueError('Invalid simulated damper operating envelope')
+    if policy['type'] == 'fixed':
+        if not minimum <= policy['command_pct'] <= maximum:
+            raise ValueError('Fixed policy exceeds the authorized simulation envelope')
+    elif policy['type'] == 'proportional':
+        if policy['minimum_pct'] < minimum or policy['maximum_pct'] > maximum:
+            raise ValueError('Feedback policy exceeds the authorized simulation envelope')
     dt = scenario['step_seconds']
     duration = scenario['duration_minutes'] * 60
     if dt <= 0 or duration <= 0 or duration % dt != 0:
@@ -58,6 +68,8 @@ def simulate(room, ahu, scenario, policy):
     while elapsed < duration:
         occupants = inputs.occupants_at(elapsed)
         control = command(policy, co2)
+        if not minimum <= control <= maximum:
+            raise ValueError('Simulated command exceeds the authorized operating envelope')
         initial_co2, initial_position = co2, position
         remaining = dt
         flow_integral = 0
@@ -75,7 +87,8 @@ def simulate(room, ahu, scenario, policy):
                          co2_start_ppm=initial_co2, co2_end_ppm=co2,
                          damper_command_pct=control, damper_position_start_pct=initial_position,
                          damper_position_end_pct=position, outdoor_airflow_mean_m3_s=flow_integral / dt,
-                         infiltration_m3_s=infiltration))
+                         infiltration_m3_s=infiltration,
+                         fan_command_baseline_pct=ahu.get('snapshot_only', {}).get('fan_command_pct')))
         elapsed += dt
     return rows
 
@@ -115,7 +128,7 @@ def run(project_root, scenario_path):
         'rows': sum(len(rows) for rows in results),
         'limitations': ['Illustrative assumptions only; not a validated ZB202 response model.',
                         'No BA connection, no historical sensor replay, no real actuator commands.',
-                        'Fixed assumed room supply flow and outdoor-fraction curve; screenshot readings are not calibration.',
+                        'BA baseline is user-confirmed; fixed room allocation and outdoor-fraction response remain uncalibrated.',
                         'Single well-mixed zone, no thermal/humidity/PM/energy model; air volume is not energy savings.',
                         'Each CSV row describes one interval; occupancy and command apply throughout that interval.'],
     }

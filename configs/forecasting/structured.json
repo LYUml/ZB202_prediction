@@ -1,0 +1,12 @@
+{
+  "base_run": "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad",
+  "features": "co2_only",
+  "seeds": [42, 43, 44],
+  "epochs": 24,
+  "patience": 3,
+  "models": [
+    {"kind": "decomp_srnn", "overrides": {"decomposition_kernel": 25, "state_hidden": 16}},
+    {"kind": "relaxation", "overrides": {}}
+  ],
+  "notes": "Fixed 18 fits on development only. Decomposition RNN uses shared pointwise time-axis recurrence, masks/age/calendar and current residual anchor, not original PIAD reproduction. Relaxation uses all19 channels; positive equilibrium and rate<=0.25 per5min produce convex mean reversion for nonnegative inputs. Latent rates are not measured ventilation. No original test evaluation."
+}

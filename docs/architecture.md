@@ -57,3 +57,7 @@ C 为 ppm；N 为假设人数；G 为 m³/s/人；V 为 m³；Q 为 m³/s。每�
 ## 输入编码修复与滚动比较
 
 默认features使用safe-v2，旧权重诊断显式选legacy-v1。baselines提供与TCN相同窗口语义的直接多步LSTM，以及压缩历史的Ridge；benchmark负责固定预算实验，不改原始对齐。具体契约和分段见[评估协议](forecasting-validation.md)。
+
+## 进一步开发入口
+
+新增ablation（单组特征与独立TCN）、ensemble（固定种子平均与内部验证混合）、refinement（仅重训轮数被截断的模型），均复用benchmark的训练/评分函数。协议见forecasting-ablation.md。新IndependentTCN与联合TCN共享窗口输入/多步输出约定，但仅允许19通道CO₂输入，并在内部按点位取本点数值/mask/age及共同日历。

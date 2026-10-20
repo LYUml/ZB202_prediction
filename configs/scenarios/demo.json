@@ -1,6 +1,6 @@
 {
   "id": "demo-occupied-room",
-  "version": "1",
+  "version": "2",
   "duration_minutes": 180,
   "step_seconds": 60,
   "initial_co2_ppm": 800,
@@ -21,23 +21,29 @@
   ],
   "strategies": [
     {
+      "id": "fixed-20",
+      "type": "fixed",
+      "command_pct": 20
+    },
+    {
       "id": "fixed-30",
       "type": "fixed",
       "command_pct": 30
     },
     {
-      "id": "fixed-60",
+      "id": "fixed-40",
       "type": "fixed",
-      "command_pct": 60
+      "command_pct": 40
     },
     {
       "id": "co2-feedback",
       "type": "proportional",
       "target_ppm": 800,
       "gain_pct_per_ppm": 0.2,
-      "minimum_pct": 10,
-      "maximum_pct": 100
+      "minimum_pct": 20,
+      "maximum_pct": 40
     }
   ],
-  "note": "All occupancy, controller targets and initial state are assumed; no real history replay or BA control."
+  "note": "Synthetic occupancy and CO2 initial state; BA baseline damper position11%, command30%, fan fixed60%; user authorized damper commands20-40 for simulation only. CO2 target800 is an illustrative objective, not a regulatory or user-approved threshold.",
+  "baseline_reference": "configs/ahu.json"
 }

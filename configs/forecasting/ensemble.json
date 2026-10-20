@@ -1,0 +1,8 @@
+{
+  "base_run": "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad",
+  "features": "co2_only",
+  "seeds": [42, 43, 44],
+  "tcn_weights": [0.0, 0.25, 0.5, 0.75, 1.0],
+  "weight_scope": "one global weight for all sensors and horizons, fitted separately per inner-validation fold",
+  "notes": "No retraining, no old-test access, no weight selection on outer development labels; seed ensemble is fixed arithmetic mean."
+}

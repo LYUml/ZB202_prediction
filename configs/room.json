@@ -1,12 +1,12 @@
 {
   "id": "ZB202",
-  "version": "assumed-v1",
+  "version": "assumed-v2-measurement-review",
   "parameters": {
     "volume_m3": {
       "value": 300,
       "unit": "m3",
       "source": "assumed",
-      "note": "Placeholder only; not extracted from IFC. Replace after room boundary/net height confirmation."
+      "note": "Demonstration value only; no confirmed IFC room volume. CO2 alone cannot separate volume, occupancy/emissions and airflow without independent evidence."
     },
     "outdoor_co2_ppm": {
       "value": 420,
@@ -24,5 +24,11 @@
       "unit": "1/h",
       "source": "assumed"
     }
+  },
+  "measurement_mapping": {
+    "modeled_state": "latent well-mixed zone CO2, not automatically equal to any raw sensor",
+    "status": "unresolved",
+    "reason": "Training-period simultaneous-bin CO2 differences persist across sensors; no absolute calibration or spatial allocation established",
+    "allow_direct_five_sensor_calibration": false
   }
 }

@@ -1,0 +1,13 @@
+{
+  "base_run": "artifacts/forecasting/20261020T052846Z-benchmark-671d2cad",
+  "features": "co2_only",
+  "seeds": [42, 43, 44],
+  "epochs": 24,
+  "patience": 3,
+  "models": [
+    {"kind": "nlinear", "overrides": {}},
+    {"kind": "dlinear", "overrides": {"decomposition_kernel": 25}},
+    {"kind": "mask_linear", "overrides": {}}
+  ],
+  "notes": "Development-only model expansion; same origins and observed labels. NLinear/DLinear read five normalized CO2 histories with train-mean zero imputation, ignoring masks/age/calendar. MaskAwareLinear reads all 19 historical channels. No old-test access or raw-label edits."
+}
