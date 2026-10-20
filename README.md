@@ -12,7 +12,9 @@ ZB202 房间 CO₂ 预测与通风情景模拟项目。目标是结合真实 IoT
 - 已实现真实数据因果对齐、多变量直接多步 TCN、时间留出评估与持续值对照。
 - 已完成首轮实验和 11 项检查；**首轮 TCN 测试误差高于持续值对照，尚未选定最终预测模型**。见 [首轮实验报告](reports/forecasting/20261018T131219Z-d95c977c.md)。
 
-后续工作：预测诊断、LSTM / PIAD-SRNN 对比、滚动验证、空间参数核实与辨识、多情景 MPC。当前尚未接入 BA，也未完成真实 AHU 响应标定。
+专项诊断见 [首轮失控诊断](reports/forecasting/20261020-first-run-diagnosis.md)：训练期完全缺测的占用通道在后期被标准化为1000，是本轮失控主要原因；尚未重训或调参。
+
+后续工作：输入编码修复、LSTM / PIAD-SRNN 对比、滚动验证、空间参数核实与辨识、多情景 MPC。当前尚未接入 BA，也未完成真实 AHU 响应标定。
 
 ## 目录
 
@@ -24,7 +26,14 @@ configs/
 ├── ahu.json                AHU 截图参考与假设参数
 └── scenarios/              模拟情景
 src/zb202/
-├── forecasting/            真实数据预处理、TCN、训练与评估
+├── forecasting/
+│   ├── data.py             原始读取、因果对齐和时间切分
+│   ├── features.py         仅训练段标准化与模型输入
+│   ├── windows.py          历史窗口与真实未来标签
+│   ├── tcn.py              网络结构
+│   ├── evaluation.py       冻结推理和同标签指标
+│   ├── train.py            训练、早停和实验产物编排
+│   └── diagnostics.py      已有运行取证和输入敏感性检查
 ├── adapters/               模拟输入来源
 ├── models/                 CO₂ 与简化 AHU 物理模型
 ├── controllers.py          固定开度、CO₂ 比例反馈
@@ -57,6 +66,8 @@ python3 -m venv .venv
 .venv/bin/python scripts/forecast.py prepare
 # 训练、验证集早停，然后评估测试集
 .venv/bin/python scripts/forecast.py train
+# 诊断冻结的首轮运行（不训练）
+.venv/bin/python scripts/forecast.py diagnose
 # 完整检查
 .venv/bin/python -m unittest discover -s tests -v
 ```

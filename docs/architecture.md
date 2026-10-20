@@ -44,6 +44,12 @@ C 为 ppm；N 为假设人数；G 为 m³/s/人；V 为 m³；Q 为 m³/s。每�
 
 ## 真实预测模块（2026-10-18 起）
 
-`forecasting/data.py` 从原始 annotated CSV 构造因果五分钟输入及真实观测标签，独立于 synthetic 模拟。`forecasting/tcn.py` 是因果残差 TCN，直接输出全部预测时距；`forecasting/train.py` 负责时间切分、仅训练段标准化、验证早停与最后一次测试。入口为 `scripts/forecast.py`。
+`forecasting/data.py` 从原始 annotated CSV 构造因果五分钟输入及真实观测标签，独立于 synthetic 模拟。`forecasting/tcn.py` 是因果残差 TCN，直接输出全部预测时距；`forecasting/data.py` 的 `sample_origins` 负责时间切分；`features.py` 负责仅训练段标准化，`windows.py` 管理窗口与标签掩码，`evaluation.py` 负责冻结推理与同标签指标。`train.py` 编排训练、验证早停与最后一次测试，`diagnostics.py` 独立读取已有运行开展取证。入口为 `scripts/forecast.py`。
 
 完整路线见根目录 PROJECT_PLAN.md；预测网络不接受假阀门值作为真实控制输入，不用于反事实 AHU 决策。
+
+## 模块与产物约定（2026-10-20）
+
+按照 codebase-design 的深模块原则，调用者通过 prepare/train/diagnose 入口完成工作；内部实现按已有职责集中管理，避免每个脚本重复实现标准化和评估。当前不为尚未实现的 LSTM/MPC 增设抽象接口。物理 models 与真实 forecasting 继续独立，保留现有目录以避免无收益搬迁。
+
+冻结run根目录的权重、预测与manifest保持不变；追加诊断位于其 diagnostics/ 子目录，人可审阅结论位于 reports/forecasting/。旧run的代码哈希描述原训练代码，不因重构覆盖；本轮通过精确预测重放验证兼容性。标准化旧行为暂保留以复现缺陷，修复需版本化并在训练/验证时段评估。

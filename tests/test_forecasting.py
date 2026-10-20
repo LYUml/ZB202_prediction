@@ -7,7 +7,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from zb202.forecasting.data import SENSORS, align_series, sample_origins
 from zb202.forecasting.tcn import CausalConv, TCN
-from zb202.forecasting.train import build_inputs
+from zb202.forecasting.features import build_inputs
 
 
 class ForecastingTests(unittest.TestCase):

@@ -1,7 +1,6 @@
 """Single frozen chronological split, validation early stopping, then one test pass."""
 from datetime import datetime, timezone
 import copy
-import csv
 import json
 from pathlib import Path
 import random
@@ -10,67 +9,13 @@ from uuid import uuid4
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from .data import SENSORS, digest, iso, prepare, sample_origins
 from .tcn import TCN
-
-
-class Windows(Dataset):
-    def __init__(self, x, current, y, origins, config):
-        self.x, self.current, self.y, self.origins, self.config = x, current, y, origins, config
-
-    def __len__(self):
-        return len(self.origins)
-
-    def __getitem__(self, i):
-        t = self.origins[i]
-        target = self.y[t + 1:t + self.config['horizon_steps'] + 1]
-        return (self.x[t - self.config['lookback_steps'] + 1:t + 1], self.current[t],
-                np.nan_to_num(target), np.isfinite(target))
-
-
-def build_inputs(data, names, train_end):
-    values = data['values']
-    valid = np.isfinite(values[:train_end])
-    count = valid.sum(axis=0)
-    mean = np.nansum(values[:train_end], axis=0) / np.maximum(count, 1)
-    variance = np.where(valid, (values[:train_end] - mean) ** 2, 0).sum(axis=0) / np.maximum(count, 1)
-    scale = np.maximum(np.sqrt(variance), 1e-3)
-    norm = np.where(np.isfinite(values), (values - mean) / scale, 0)
-    mask = np.isfinite(values).astype(np.float32)
-    age = np.minimum(data['ages'], 86400) / 86400
-    timestamps = data['timestamps']
-    # HK calendar clock, derived from UTC without any future values.
-    local = timestamps + 8 * 3600
-    day_phase = 2 * np.pi * (local % 86400) / 86400
-    week_phase = 2 * np.pi * (local % (86400 * 7)) / (86400 * 7)
-    calendar = np.stack([np.sin(day_phase), np.cos(day_phase), np.sin(week_phase), np.cos(week_phase)], axis=1)
-    x = np.concatenate([norm, mask, age, calendar], axis=1).astype(np.float32)
-    cols = [names.index(s + '/co2_ppm') for s in SENSORS]
-    target_mean, target_scale = mean[cols], scale[cols]
-    y = ((data['targets'] - target_mean) / target_scale).astype(np.float32)
-    current = ((values[:, cols] - target_mean) / target_scale).astype(np.float32)
-    return x, current, y, {'feature_mean': mean.tolist(), 'feature_scale': scale.tolist(),
-                           'target_mean': target_mean.tolist(), 'target_scale': target_scale.tolist()}
-
-
-def predict(model, loader, mean, scale):
-    preds, truth, masks, baseline = [], [], [], []
-    model.eval()
-    with torch.no_grad():
-        for x, current, y, mask in loader:
-            preds.append(model(x, current).numpy() * scale + mean)
-            truth.append(y.numpy() * scale + mean)
-            masks.append(mask.numpy())
-            baseline.append(np.repeat(current.numpy()[:, None, :], y.shape[1], axis=1) * scale + mean)
-    return tuple(np.concatenate(v) for v in [preds, truth, masks, baseline])
-
-
-def scores(pred, truth, mask):
-    error = (pred - truth)[mask]
-    return {'observed_labels': len(error), 'mae_ppm': float(np.abs(error).mean()) if len(error) else None,
-            'rmse_ppm': float(np.sqrt((error ** 2).mean())) if len(error) else None}
+from .features import build_inputs
+from .windows import Windows
+from .evaluation import predict, scores
 
 
 def train(project_root, config_path):
