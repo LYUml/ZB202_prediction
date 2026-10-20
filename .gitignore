@@ -11,3 +11,11 @@ data/synthetic/*/
 # Derived datasets and model checkpoints are reproducible.
 data/processed/zb202_iot/*/
 artifacts/
+
+# Python tooling caches and compiled bytecode.
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+# Local execution logs.
+*.log

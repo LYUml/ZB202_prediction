@@ -1,0 +1,7 @@
+{
+  "day_utc8": "2026-10-18",
+  "sensor": "AM103_05",
+  "horizon_minutes": 30,
+  "clock_window_utc8": "12:00–15:00 (end excluded)",
+  "rule": "middle complete calendar day; first schema sensor; fixed noon window, no error-based selection; all five-minute observations retained"
+}

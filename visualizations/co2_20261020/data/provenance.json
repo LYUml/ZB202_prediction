@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/forecasting/20261020T092656Z-confirmation-25df244e",
+  "predictions_sha256": "d6c5840a7831000e284cd7ed762cdde830de63df0ed97973f220ce99dd60a7e0",
+  "origin_range_utc8": [
+    "2026-10-16T17:25:00+08:00",
+    "2026-10-20T16:20:00+08:00"
+  ],
+  "observed_label_items": 61370,
+  "overlapping_origins": 1140,
+  "metrics_reproduced": true,
+  "model_mae_ppm": 6.565910135126765,
+  "baseline_mae_ppm": 8.32113414429772,
+  "mae_improvement_fraction": 0.21093567039461436,
+  "timezone": "UTC+8",
+  "scope": "Frozen later-time confirmation; repeated labels across horizons are not independent samples; no model fitting or synthetic data",
+  "python": "/opt/homebrew/Caskroom/miniforge/base/bin/python3.13"
+}

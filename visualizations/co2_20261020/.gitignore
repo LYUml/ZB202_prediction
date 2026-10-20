@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+# Disposable render previews and QA scratch files.
+_tmp/
+# Generated static-check console output.
+verification-style.txt
