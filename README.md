@@ -12,9 +12,11 @@ ZB202 房间 CO₂ 预测与通风情景模拟项目。目标是结合真实 IoT
 - 已实现真实数据因果对齐、多变量直接多步 TCN、时间留出评估与持续值对照。
 - 已完成首轮实验和 11 项检查；**首轮 TCN 测试误差高于持续值对照，尚未选定最终预测模型**。见 [首轮实验报告](reports/forecasting/20261018T131219Z-d95c977c.md)。
 
-专项诊断见 [首轮失控诊断](reports/forecasting/20261020-first-run-diagnosis.md)：训练期完全缺测的占用通道在后期被标准化为1000，是本轮失控主要原因；尚未重训或调参。
+专项诊断见 [首轮失控诊断](reports/forecasting/20261020-first-run-diagnosis.md)：训练期完全缺测的占用通道在后期被标准化为1000，是首轮失控主要原因；诊断阶段保留了冻结权重，后续修复试验见下。
 
-后续工作：输入编码修复、LSTM / PIAD-SRNN 对比、滚动验证、空间参数核实与辨识、多情景 MPC。当前尚未接入 BA，也未完成真实 AHU 响应标定。
+已修复输入编码并完成持续值/Ridge/TCN/LSTM三折、三种子初筛，见 [修复与比较结果](reports/forecasting/20261020-input-repair-comparison.md)。精简输入TCN的开发MAE为7.55 ppm，持续值9.51 ppm；19项代码检查通过。
+
+后续工作：逐组特征消融、PIAD-SRNN / DLinear、新增时段最终验证、空间参数核实与辨识、多情景 MPC。当前尚未接入 BA，也未完成真实 AHU 响应标定。
 
 ## 目录
 
@@ -33,7 +35,9 @@ src/zb202/
 │   ├── tcn.py              网络结构
 │   ├── evaluation.py       冻结推理和同标签指标
 │   ├── train.py            训练、早停和实验产物编排
-│   └── diagnostics.py      已有运行取证和输入敏感性检查
+│   ├── diagnostics.py      已有运行取证和输入敏感性检查
+│   ├── baselines.py        直接多步LSTM和Ridge
+│   └── benchmark.py        固定协议滚动比较与压力检查
 ├── adapters/               模拟输入来源
 ├── models/                 CO₂ 与简化 AHU 物理模型
 ├── controllers.py          固定开度、CO₂ 比例反馈
@@ -68,11 +72,13 @@ python3 -m venv .venv
 .venv/bin/python scripts/forecast.py train
 # 诊断冻结的首轮运行（不训练）
 .venv/bin/python scripts/forecast.py diagnose
+# 输入修复后的固定预算滚动比较（持续值、Ridge、TCN、LSTM）
+.venv/bin/python scripts/forecast.py benchmark
 # 完整检查
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
-TCN 输入过去 4 小时，直接预测未来 1 小时的五个 CO₂ 点位。特征仅使用预测起点前已记录的观测；未来标签只取对应时间区间的真实 CO₂，不做前向填充。标准化仅使用训练时间段，验证集用于早停，测试集用于最终评估。
+TCN 输入过去 4 小时，直接预测未来 1 小时的五个 CO₂ 点位。特征仅使用预测起点前已记录的观测；未来标签只取对应时间区间的真实 CO₂，不做前向填充。标准化仅使用训练时间段，验证集用于早停，测试集用于最终评估。默认使用safe-v2编码：二值事件不做方差放大，训练完全缺测特征显式禁用；首轮重放仍使用legacy-v1。比较协议与已暴露测试边界见 [评估协议](docs/forecasting-validation.md)。
 
 通用依赖文件给出兼容版本范围。若需复现首轮本机依赖版本，在兼容环境中改用：
 

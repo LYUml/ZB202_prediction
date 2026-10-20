@@ -31,7 +31,7 @@ def train(project_root, config_path):
     origins, train_end, val_end = sample_origins(data, names, config)
     if any(len(v) == 0 for v in origins.values()):
         raise ValueError('Insufficient eligible samples in one or more chronological splits')
-    x, current, y, normalization = build_inputs(data, names, train_end)
+    x, current, y, normalization = build_inputs(data, names, train_end, config.get('input_encoding', 'safe-v2'))
     loaders = {key: DataLoader(Windows(x, current, y, idx, config), batch_size=config['batch_size'],
                               shuffle=key == 'train', num_workers=0) for key, idx in origins.items()}
     model = TCN(x.shape[1], len(SENSORS), config)

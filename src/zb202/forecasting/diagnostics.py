@@ -28,7 +28,7 @@ def diagnose(root, run):
     checkpoint = torch.load(run / 'tcn.pt', map_location='cpu', weights_only=False)
     cfg, names = checkpoint['config'], checkpoint['feature_names']
     origins, train_end, val_end = sample_origins(data, names, cfg)
-    x, current, y, norm = build_inputs(data, names, train_end)
+    x, current, y, norm = build_inputs(data, names, train_end, encoding='legacy-v1')
     for key in norm:
         np.testing.assert_allclose(norm[key], checkpoint['normalization'][key], rtol=1e-7)
     torch.set_num_threads(4)

@@ -11,7 +11,12 @@
   "train_fraction": 0.7,
   "validation_fraction": 0.15,
   "channels": 32,
-  "dilations": [1, 2, 4, 8],
+  "dilations": [
+    1,
+    2,
+    4,
+    8
+  ],
   "kernel_size": 3,
   "dropout": 0.1,
   "batch_size": 128,
@@ -20,5 +25,6 @@
   "learning_rate": 0.001,
   "weight_decay": 0.0001,
   "seed": 42,
-  "event_semantics": "Most recent event, not a confirmed persistent state or room people count; max age is an unvalidated modelling choice."
+  "event_semantics": "Most recent event, not a confirmed persistent state or room people count; max age is an unvalidated modelling choice.",
+  "input_encoding": "safe-v2"
 }

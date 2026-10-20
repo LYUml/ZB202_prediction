@@ -1,0 +1,14 @@
+{
+  "base_config": "configs/forecasting/tcn.json",
+  "processed": "data/processed/zb202_iot/2026-10-16T09-22-35.747Z/causal-v1-40549f4b5ad7",
+  "input_encoding": "safe-v2",
+  "feature_sets": ["all", "co2_only"],
+  "seeds": [42, 43, 44],
+  "epochs": 12,
+  "patience": 3,
+  "ridge_alpha": 10.0,
+  "fold_fractions": [[0.40, 0.45, 0.50], [0.50, 0.55, 0.60], [0.60, 0.65, 0.70]],
+  "exposed_stress_fractions": [0.70, 0.85, 1.0],
+  "exposed_stress_feature_sets": ["all"],
+  "notes": "Fixed-budget pilot, not hyperparameter search. Inner validation chooses epochs; outer development windows assess models. Historical test is exposed stress only."
+}

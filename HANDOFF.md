@@ -2,6 +2,16 @@
 
 更新：2026-10-20。工作区 `/Users/lml/Desktop/ZB202_prediction`。仓库 https://github.com/LYUml/ZB202_prediction.git 。交接前工作区干净，当前 HEAD 为 `9207826`；历史曾被重新整理，不依赖旧聊天中的其他提交编号。
 
+## 最新状态：2026-10-20 输入修复与模型比较已完成
+
+本块优先于下方首轮历史描述。默认safe-v2编码已修复训练未见通道放大问题；旧diagnose显式使用legacy-v1，原权重重放差0ppm。新增baselines.py（LSTM/Ridge）、benchmark.py及benchmark.json；命令`.venv/bin/python scripts/forecast.py benchmark`。
+
+已完成3折×2特征设置×3种子的TCN/LSTM，另有Ridge和持续值，共42次神经拟合、7次Ridge拟合、4组持续值。开发平均MAE：持续值9.514；完整特征Ridge8.885/TCN8.455/LSTM8.748；精简CO₂版本Ridge8.247/TCN7.547/LSTM8.314。优先继续精简TCN及逐组特征消融，不急着加深网络。
+
+旧测试只作完整特征压力检查：Ridge12.023、TCN11.337、LSTM11.721，持续值13.313 ppm。本轮全部输出无负预测，但尖峰尾部误差仍高。这里不是新的独立最终测试；精简模型按协议未追加旧测试筛选。9500ppm保留，用户反馈不清楚当时特殊活动、没有记录。
+
+19项代码检查通过。报告：reports/forecasting/20261020-input-repair-comparison.md；完整结果：reports/forecasting/20261020T052846Z-benchmark-671d2cad.md；本地产物：artifacts/forecasting/20261020T052846Z-benchmark-671d2cad/。协议：docs/forecasting-validation.md。没有新增依赖；没有提交/推送。后续需新增时段最终验证；PIAD-SRNN、DLinear、MPC尚未实现。
+
 ## 用户目标与偏好
 
 用 ZB202 的真实传感器历史、Revit/IFC 空间参考和 AHU 信息，逐步做房间预测、通风情景模拟，最终推荐新风量/阀门开度。当前没有 BA 历史或真实控制能力，允许建立明确标注的假设与合成情景，后续接真实 BA。
@@ -24,7 +34,7 @@
 - 简化 CO₂/AHU 模拟器，含固定开度、比例反馈，结果写 synthetic，尚未标定。
 - 真实记录因果时间对齐、观测掩码、数据年龄；直接多步 TCN，时间切分、训练段标准化、验证早停及持续值对照。
 - 已训练首轮；11 项测试通过。
-- LSTM、PIAD-SRNN、MPC、BIM 几何提取、参数辨识尚未实现。不要把调研方案描述成已完成。
+- 最新已实现LSTM和滚动比较；PIAD-SRNN、MPC、BIM几何提取、参数辨识仍未实现。不要把调研方案描述成已完成。
 
 ## 数据与物理边界
 
@@ -64,7 +74,7 @@ AHU-LG1-10 截图时间未知，服务区标注 ZB202。风阀指令30%/位置11
 - 60分钟实际变化>20ppm时，TCN MAE113.34，持续值59.94，变化段同样未胜出。
 - 最佳验证MAE9.29，测试明显变差；原因未诊断确认。
 
-## 推荐下一步（尚未执行）
+## 首轮历史建议（已部分执行，以顶部最新状态为准）
 
 优先诊断，不直接加深网络或盲目调参：
 1. 核对最差预测对应原始时间、点位、输入与五点同步情况；检查9,500ppm及负预测。
@@ -73,7 +83,7 @@ AHU-LG1-10 截图时间未知，服务区标注 ZB202。风阀指令30%/位置11
 4. 再做同输入/预算的 TCN、直接多步 LSTM、PIAD-SRNN 对比。
 5. 与此同时按主计划逐步确认空间与物理参数，再推进多情景控制。
 
-用户最后实际要求是交接开新聊天，尚未明确授权“立即开始上述专项诊断”；新聊天结合用户新指令推进。
+用户已在本聊天授权专项诊断、输入修复和模型比较，执行结果见顶部最新状态。
 
 ## 本地环境、命令与产物
 
@@ -106,7 +116,7 @@ npm --prefix influxdb run data:verify -- data/raw/zb202_iot/<snapshot>
 
 用户曾要求将项目推送到指定GitHub仓库，代码和说明此前已同步。当前交接仅新增本 HANDOFF.md，本轮没有提交/推送或创建新聊天；由用户自行开启新聊天。不要因旧聊天的提交号与当前重写过的历史不一致而重置仓库。
 
-## 2026-10-20 专项诊断更新
+## 2026-10-20 专项诊断阶段更新（历史，修复试验见顶部）
 
 用户本轮已授权诊断与用skill整理结构。已使用codebase-design完成模块提取，新增features/windows/evaluation/diagnostics，train保持编排。详见 reports/forecasting/20261020-first-run-diagnosis.md；diagnose命令可重放。
 

@@ -53,3 +53,7 @@ C 为 ppm；N 为假设人数；G 为 m³/s/人；V 为 m³；Q 为 m³/s。每�
 按照 codebase-design 的深模块原则，调用者通过 prepare/train/diagnose 入口完成工作；内部实现按已有职责集中管理，避免每个脚本重复实现标准化和评估。当前不为尚未实现的 LSTM/MPC 增设抽象接口。物理 models 与真实 forecasting 继续独立，保留现有目录以避免无收益搬迁。
 
 冻结run根目录的权重、预测与manifest保持不变；追加诊断位于其 diagnostics/ 子目录，人可审阅结论位于 reports/forecasting/。旧run的代码哈希描述原训练代码，不因重构覆盖；本轮通过精确预测重放验证兼容性。标准化旧行为暂保留以复现缺陷，修复需版本化并在训练/验证时段评估。
+
+## 输入编码修复与滚动比较
+
+默认features使用safe-v2，旧权重诊断显式选legacy-v1。baselines提供与TCN相同窗口语义的直接多步LSTM，以及压缩历史的Ridge；benchmark负责固定预算实验，不改原始对齐。具体契约和分段见[评估协议](forecasting-validation.md)。
