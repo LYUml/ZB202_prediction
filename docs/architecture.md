@@ -50,9 +50,9 @@ C 为 ppm；N 为假设人数；G 为 m³/s/人；V 为 m³；Q 为 m³/s。每�
 
 ## 模块与产物约定（2026-10-20）
 
-按照 codebase-design 的深模块原则，调用者通过 prepare/train/diagnose 入口完成工作；内部实现按已有职责集中管理，避免每个脚本重复实现标准化和评估。当前不为尚未实现的 LSTM/MPC 增设抽象接口。物理 models 与真实 forecasting 继续独立，保留现有目录以避免无收益搬迁。
+按照 codebase-design 的深模块原则，调用者通过prepare/train/diagnose、固定比较与predict/confirm入口完成工作；内部实现按已有职责集中管理，避免每个脚本重复实现标准化和评估。LSTM及其他实际候选已通过现有build_model接入，不为尚未实现的MPC增设假想接口。物理 models 与真实 forecasting 继续独立，保留现有目录以避免无收益搬迁。
 
-冻结run根目录的权重、预测与manifest保持不变；追加诊断位于其 diagnostics/ 子目录，人可审阅结论位于 reports/forecasting/。旧run的代码哈希描述原训练代码，不因重构覆盖；本轮通过精确预测重放验证兼容性。标准化旧行为暂保留以复现缺陷，修复需版本化并在训练/验证时段评估。
+冻结run根目录的权重、预测与manifest保持不变；追加诊断位于其 diagnostics/ 子目录，对外汇报按需手动整理到reports/，不随每次实验生成。旧run的代码哈希描述原训练代码，不因重构覆盖；本轮通过精确预测重放验证兼容性。默认输入已修复为safe-v2；legacy-v1仅用于旧权重重放。
 
 ## 输入编码修复与滚动比较
 

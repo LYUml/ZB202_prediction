@@ -197,33 +197,7 @@ def benchmark(root, config_path):
     record['status'] = 'complete'
     record['outputs'] = {p.name: digest(p) for p in output.iterdir() if p.name != 'manifest.json'}
     save()
-    report = root/'reports/forecasting'/f'{run_id}.md'
-    lines = ['# 输入修复后滚动比较', '', f'Run: `{run_id}`。固定预算试验，不是独立最终测试。', '',
-             '3个扩展窗口；每折独立训练标准化，内部验证早停后才评估外部开发窗口。旧测试单列exposed-stress。', '',
-             '所有模型预测相同未来真实标签；每个神经模型3个种子，不挑选最优种子。all=全部历史特征；co2_only=五点CO₂及其mask/age和日历。', '',
-             '二值事件保持0/1；训练完全缺测的数值/mask/age全部冻结为0；常数连续数值冻结。高值原始标签和预测均不裁剪。', '',
-             '每次最多12轮，patience=3；TCN沿用原结构；LSTM单层32隐藏单元；Ridge固定alpha=10，用历史末值、均值和净变化。', '',
-             '| 时段 | 特征 | 模型 | MAE均值±种子SD | RMSE均值 | P99绝对误差均值 | 负预测数范围 | 平均秒数 |',
-             '| --- | --- | --- | ---: | ---: | ---: | --- | ---: |']
-    for fold, _, sets in folds:
-        for features in ['shared']+sets:
-            for kind in ['persistence', 'ridge', 'tcn', 'lstm']:
-                rows = [r for r in record['results'] if (r['fold'],r['features'],r['model']) == (fold,features,kind)]
-                if not rows:
-                    continue
-                maes = [r['metrics']['mae_ppm'] for r in rows]
-                negatives = [r['metrics']['negative_predictions'] for r in rows]
-                sd = np.std(maes, ddof=1) if len(rows)>1 else 0.
-                lines.append(f"| {fold} | {features} | {kind} | {np.mean(maes):.3f} ± {sd:.3f} | "
-                             f"{np.mean([r['metrics']['rmse_ppm'] for r in rows]):.3f} | "
-                             f"{np.mean([r['metrics']['p99_abs_error_ppm'] for r in rows]):.3f} | "
-                             f"{min(negatives)}–{max(negatives)} | {np.mean([r['seconds'] for r in rows]):.1f} |")
-    lines += ['', '## 时间范围（UTC）', '']
-    for f in record['folds']:
-        lines.append(f"- {f['name']}: `{json.dumps(f['ranges_utc'], ensure_ascii=False)}`")
-    lines += ['', '## 产物与限制', '', f'完整逐时距、逐点位、变化段指标、epoch历史、标准化与代码哈希见 `artifacts/forecasting/{run_id}/manifest.json`。预测、标签和权重同目录。', '',
-              '种子标准差只描述初始化差异，不代表独立样本置信区间。窗口重叠、开发期已用于诊断且方案受已暴露旧测试启发；需要新增时间数据确认泛化。', '',
-              '这是有限训练预算的初筛，不能据此宣称某类架构普遍更优。Ridge压缩历史，与神经网络的表示不同。无BA输入，不能判断新阀门动作的效果。']
-    report.write_text('\n'.join(lines)+'\n')
-    print('Report:', report, flush=True)
-    return output, report
+    # Reports are curated manually; machine-readable results stay with the run.
+    manifest_path = output / 'manifest.json'
+    print('Results:', manifest_path, flush=True)
+    return output, manifest_path

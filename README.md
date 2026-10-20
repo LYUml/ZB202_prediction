@@ -1,151 +1,35 @@
 # ZB202 Prediction
 
-ZB202 房间 CO₂ 预测与通风情景模拟项目。目标是结合真实 IoT 数据、空间模型和 AHU 物理模型，逐步实现环境预测、新风策略比较，并在未来接入真实 BA 数据。
+ZB202 房间 **CO₂ 短期预测与通风情景模拟**。根据过去 4 小时的真实历史，预测未来 1 小时五个点位的浓度；在明确假设下比较通风策略。
 
-完整思路与阶段安排见 [PROJECT_PLAN.md](PROJECT_PLAN.md)，方法调研见 [方法方案](docs/method-proposal.md)。
-
-## 当前进度
-
-**当前实用优选：精简CO₂ TCN，固定三个种子预测取平均。** 多方法与假设审查已收敛；新增真实约四天确认MAE6.566ppm，持续值8.321ppm，改善21.1%，零负预测；36项检查通过。AM308点位MAE仍略差于持续值，新段没有极端高浓度，不能据此宣称长期上线或真实控制有效。详见[优化结论与完整比较](reports/forecasting/20261020-optimization-conclusion.md)。
-
-- 已导出并核验 `zb202_iot` 原始快照：949,752 条字段观测。
-- 已保存用户提供的 IFC 与 AHU 截图作为原始参考。
-- 已实现使用明确假设的单房间 CO₂ / AHU 模拟器。
-- 已实现真实数据因果对齐、多变量直接多步 TCN、时间留出评估与持续值对照。
-- 已完成首轮实验和 11 项检查；**首轮 TCN 测试误差高于持续值对照，尚未选定最终预测模型**。见 [首轮实验报告](reports/forecasting/20261018T131219Z-d95c977c.md)。
-
-专项诊断见 [首轮失控诊断](reports/forecasting/20261020-first-run-diagnosis.md)：训练期完全缺测的占用通道在后期被标准化为1000，是首轮失控主要原因；诊断阶段保留了冻结权重，后续修复试验见下。
-
-已修复输入编码并完成持续值/Ridge/TCN/LSTM三折、三种子初筛，见 [修复与比较结果](reports/forecasting/20261020-input-repair-comparison.md)。精简输入TCN的开发MAE为7.55 ppm，持续值9.51 ppm；19项代码检查通过。
-
-进一步优化已完成特征/点位消融、固定种子平均与训练上限检查，见 [进一步优化结果](reports/forecasting/20261020-further-optimization.md)。固定三种子预测平均的开发MAE为7.44 ppm；新增配置未带来额外改善，25项代码检查通过。
-
-持续优化已补充NLinear/DLinear/缺测感知线性，共27次拟合，尚未优于精简TCN；BA运行基准和用户授权的模拟范围已更新，30项代码检查通过。见[线性模型与BA审查](reports/forecasting/20261020-linear-and-ba-review.md)。
-
-分解状态RNN/稳定松弛候选、144组合成敏感性与新增时段确认均已完成。未来项目阶段：更长未见时段、传感器校准、空间/分配风量辨识、多情景MPC。任务账本见[优化计划](docs/optimization-program.md)。当前尚未接入 BA，也未完成真实 AHU 响应标定。
+当前方案为 **CO₂ 联合 TCN，三个固定种子预测取平均**。新增约四天确认期 MAE **6.57 ppm**，持续值对照 **8.32 ppm**。尚未标定真实风阀响应或接入设备控制。
 
 ## 目录
 
 ```text
-PROJECT_PLAN.md             项目主计划与实施记录
-configs/
-├── forecasting/tcn.json    数据处理、TCN 与训练配置
-├── room.json               房间物理参数及来源
-├── ahu.json                AHU 截图参考与假设参数
-└── scenarios/              模拟情景
-src/zb202/
-├── forecasting/
-│   ├── data.py             原始读取、因果对齐和时间切分
-│   ├── features.py         仅训练段标准化与模型输入
-│   ├── windows.py          历史窗口与真实未来标签
-│   ├── tcn.py              网络结构
-│   ├── evaluation.py       冻结推理和同标签指标
-│   ├── train.py            训练、早停和实验产物编排
-│   ├── diagnostics.py      已有运行取证和输入敏感性检查
-│   ├── baselines.py        直接多步LSTM和Ridge
-│   ├── benchmark.py        固定协议滚动比较与压力检查
-│   ├── ablation.py         逐组特征和独立点位试验
-│   ├── ensemble.py         固定种子平均和验证段混合
-│   ├── refinement.py       仅重训被轮数上限截断的模型
-│   ├── linear.py           三类线性候选
-│   ├── structured.py       时间递推分解RNN与正值松弛
-│   ├── candidates.py       扩展候选固定协议编排
-│   ├── inference.py        冻结权重、固定编码、无标签推理
-│   └── confirmation.py     新时段一次性确认与来源留档
-├── adapters/               模拟输入来源
-├── models/                 CO₂ 与简化 AHU 物理模型
-├── controllers.py          固定开度、CO₂ 比例反馈
-└── simulation.py           模拟编排与结果追溯
-scripts/                    预测、模拟及本地数据核验入口
-requirements/
-├── forecasting.txt         预测模块的通用 Python 依赖
-└── forecasting-lock.txt    首轮本机环境的精确依赖版本
-influxdb/                   独立 Node 工具、依赖与本地连接配置
-data/
-├── raw/                    原始 IoT 快照、IFC、AHU 截图
-├── processed/              从真实记录处理得到的数据
-└── synthetic/              模拟生成数据
-artifacts/                  本地模型权重、预测结果与运行记录
-reports/forecasting/        可审阅的实验报告
-docs/                       方法、架构与假设说明
-tests/                      物理模型、因果性和数据切分检查
+.
+├── docs/                   使用方法、架构、假设与评估协议
+├── reports/                按日期整理的阶段汇报
+├── visualizations/         图册、绘图脚本与指标
+├── src/zb202/              预测、物理模型与模拟逻辑
+├── scripts/                命令行入口
+├── configs/                模型参数与模拟情景
+├── data/                   raw 原始 / processed 处理 / synthetic 模拟
+├── influxdb/               数据导出与核验工具
+├── requirements/           预测环境依赖
+└── tests/                  数据、预测与物理模型检查
 ```
 
-`artifacts/`、生成的 processed 与 synthetic 运行目录默认不提交 Git，可通过原始数据、配置和代码重新生成。首次运行前这些目录可能不存在。
+## 文档导航
 
-## 真实 CO₂ 预测
+| 分类 | 入口 |
+| --- | --- |
+| 阶段汇报 | [2026-10-20 report](<reports/2026-10-20 report.md>) |
+| 可视化 | [CO₂ 图册与读图说明](visualizations/co2_20261020/README.md) |
+| 使用与复现 | [安装、数据、预测、模拟及检查命令](docs/usage.md) |
+| 评估方法 | [评估协议](docs/forecasting-validation.md) · [消融协议](docs/forecasting-ablation.md) |
+| 建模说明 | [架构](docs/architecture.md) · [参数与假设](docs/assumptions.md) · [方法方案](docs/method-proposal.md) |
+| 数据 | [数据说明](data/README.md) · [处理数据](data/processed/zb202_iot/README.md) · [模拟数据](data/synthetic/README.md) |
+| 项目管理 | [项目计划](PROJECT_PLAN.md) · [聊天交接](HANDOFF.md) |
 
-在项目根目录运行。首轮验证环境为 macOS arm64、Python 3.13；其他 Python 版本能否安装取决于 NumPy/PyTorch 对应发行包。
-
-```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements/forecasting.txt
-# 仅准备数据
-.venv/bin/python scripts/forecast.py prepare
-# 训练、验证集早停，然后评估测试集
-.venv/bin/python scripts/forecast.py train
-# 诊断冻结的首轮运行（不训练）
-.venv/bin/python scripts/forecast.py diagnose
-# 输入修复后的固定预算滚动比较（持续值、Ridge、TCN、LSTM）
-.venv/bin/python scripts/forecast.py benchmark
-# 进一步开发试验（不再评价旧测试段）
-.venv/bin/python scripts/forecast.py ablate
-.venv/bin/python scripts/forecast.py combine
-.venv/bin/python scripts/forecast.py refine
-# 扩展候选（当前含NLinear/DLinear/缺测感知线性）
-.venv/bin/python scripts/forecast.py compare
-# 结构候选（固定开发比较，不读取新增确认段）
-.venv/bin/python scripts/forecast.py compare --config configs/forecasting/structured.json
-# 使用已有本地快照的最新完整历史箱，无需未来标签；output须是新文件
-.venv/bin/python scripts/forecast.py predict --processed data/processed/zb202_iot/2026-10-20T09-22-56.494Z/causal-v1-a91fe5205b53 --output artifacts/forecasting/my-forecast.json
-# 重现已完成的确认（该时段现已暴露；不是又获得一次独立测试）
-.venv/bin/python scripts/forecast.py confirm --snapshot data/raw/zb202_iot/2026-10-20T09-22-56.494Z
-# 完整检查
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-TCN 输入过去 4 小时，直接预测未来 1 小时的五个 CO₂ 点位。特征仅使用预测起点前已记录的观测；未来标签只取对应时间区间的真实 CO₂，不做前向填充。标准化仅使用训练时间段，验证集用于早停，测试集用于最终评估。默认使用safe-v2编码：二值事件不做方差放大，训练完全缺测特征显式禁用；首轮重放仍使用legacy-v1。比较协议与已暴露测试边界见 [评估协议](docs/forecasting-validation.md)。
-
-通用依赖文件给出兼容版本范围。若需复现首轮本机依赖版本，在兼容环境中改用：
-
-```sh
-.venv/bin/python -m pip install -r requirements/forecasting-lock.txt
-```
-
-lock 文件是首轮 Python 3.13 / macOS arm64 环境的版本快照，不保证跨平台或跨硬件逐位复现结果。
-
-数据写入 `data/processed/`，模型与预测写入 `artifacts/forecasting/<run>/`，报告写入 `reports/forecasting/`。单次时间划分、单种子结果不等于最终验证；当前模型没有学习真实阀门动作的影响。
-
-`predict`使用configs/forecasting/confirmation.json内已冻结权重及哈希，默认取快照导出时最后一个完整五分钟箱；`--origin-utc`可指定带时区的历史箱。模型读48×19输入，输出12×5ppm，掩码/年龄不是额外目标。缺少本地原始数据/权重时须先恢复或重跑相应基准；这些产物默认不随Git发布。当前最新示例在artifacts/forecasting/frozen-tcn-latest-20261020.json。
-
-## 物理情景模拟
-
-需要 Python 3.10+，模拟器只使用标准库，可独立于预测环境运行：
-
-```sh
-python3 scripts/simulate.py
-python3 scripts/simulate.py --scenario configs/scenarios/demo.json
-python3 -m unittest discover -s tests -p test_simulation.py -v
-```
-
-默认模拟 3 小时，按用户确认的BA基准比较固定20%/30%/40%和范围内CO₂反馈，风机固定60%。风阀20–40是用户授权的模拟假设，不是真实设备写入。结果写入 `data/synthetic/<run>/`，包含时间序列、摘要和完整配置/来源记录。
-
-房间体积、送风量、风阀曲线等仍为明确假设。截图中的 8,168 L/s 只作为 AHU 总送风参考，不直接作为房间新风量。模拟结果不是实测控制效果，累计新风体积也不等于能耗或节能。
-
-## InfluxDB 导出与核验
-
-需要 Node.js 20+。在项目根目录运行：
-
-```sh
-npm ci --prefix influxdb
-# 仅首次创建；已有 .env 不要覆盖
-cp influxdb/.env.example influxdb/.env
-# 在 .env 填入真实连接配置和 Token
-npm --prefix influxdb run data:export
-npm --prefix influxdb run data:verify -- data/raw/zb202_iot/<snapshot>
-python3 scripts/validation/inspect-export.py data/raw/zb202_iot/<snapshot>
-```
-
-`<snapshot>` 替换为实际快照名，核验参数以项目根目录为基准。导出只读取 `zb202_iot`，自动写入项目的 `data/raw/zb202_iot/`。支持通过 `ZB202_ENV_FILE` 指定其他配置文件；真实凭据不提交 Git。
-
-详细约定见 [数据说明](data/README.md)、[架构说明](docs/architecture.md) 和 [参数假设](docs/assumptions.md)。
+生成的模型权重、处理数据和模拟运行目录默认不纳入 Git；复现所需的本地产物与条件见使用文档。

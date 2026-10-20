@@ -149,21 +149,7 @@ def ablate(root, config_path):
     record['status']='complete'
     record['outputs']={p.name:digest(p) for p in output.iterdir() if p.is_file() and p.name!='manifest.json'}
     save()
-    report=root/'reports/forecasting'/f'{run_id}.md'
-    lines=['# 特征消融与独立点位TCN', '',f'Run: `{run_id}`；仅原始前70%开发数据，无旧测试评估。', '',
-           '## 预定筛选', '', '四种单组添加（环境、占用、门磁、功率），固定种子42与原12轮预算。五个局部独立TCN各16通道、独立参数，仅输入自身CO₂/mask/age和共同日历。', '',
-           '按三折内部验证最优MAE均值排名；只有内部验证优于CO₂基线的特征候选/独立模型增加43/44种子确认。外部开发误差不参与候选筛选。', '',
-           '```json',json.dumps(record['selection'],indent=2,ensure_ascii=False),'```', '',
-           '| 特征 | 模型 | 每折种子数 | 开发MAE（三折等权） | RMSE均值 | P99均值 | 最大负预测数 | 参数数 |',
-           '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |']
-    cells=sorted({(r['features'],r['model']) for r in record['results']})
-    for group,kind in cells:
-        rows=[r for r in record['results'] if r['features']==group and r['model']==kind]
-        lines.append(f"| {group} | {kind} | {len(rows)//len(folds)} | {np.mean([r['metrics']['mae_ppm'] for r in rows]):.3f} | {np.mean([r['metrics']['rmse_ppm'] for r in rows]):.3f} | {np.mean([r['metrics']['p99_abs_error_ppm'] for r in rows]):.3f} | {max(r['metrics']['negative_predictions'] for r in rows)} | {rows[0]['parameters']} |")
-    lines+=['','## 限制与产物','', '同表不同配置的种子数不同；单种子筛选结果不能与三种子均值作正式优劣结论。共享开发窗口已多次使用，仍需未来新时间段确认。独立版改变输入范围和参数共享，无法把差异只归因于“点位互相干扰”。', '',
-            '未修改原始记录/标签，也未裁剪预测。原试验已完成的TCN/Ridge/持续值结果按来源哈希复用；所有起点、标签和mask逐折核对一致。', '',
-            '研究参考：[PatchTST通道独立设计](https://arxiv.org/abs/2211.14730)、[作者仓库](https://github.com/yuqinie98/PatchTST)。本实现是TCN消融，不是PatchTST复现。', '',
-            f'完整指标、历史、配置、代码哈希与权重在 `artifacts/forecasting/{run_id}/`。']
-    report.write_text('\n'.join(lines)+'\n')
-    print('Report:',report,flush=True)
-    return output,report
+    # Reports are curated manually; machine-readable results stay with the run.
+    manifest_path = output / 'manifest.json'
+    print('Results:', manifest_path, flush=True)
+    return output, manifest_path

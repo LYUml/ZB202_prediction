@@ -86,15 +86,7 @@ def refine(root,config_path):
         record['ensembles'].append({'fold':fold,'model':'fixed_seed_mean','metrics':summarize(pred,truth,mask,baseline)})
         np.savez_compressed(output/(fold+'-seed_mean.npz'),predictions_ppm=pred);save()
     record['status']='complete';record['outputs']={p.name:digest(p) for p in output.iterdir() if p.name!='manifest.json'};save()
-    report=root/'reports/forecasting'/f'{run_id}.md'
-    lines=['# 仅延长触及轮数上限的TCN','',f'Run: `{run_id}`；固定24轮上限、patience=3，只有原12轮触顶且尚未早停的模型重新拟合。','',
-           '7个已早停模型复用原权重/预测，2个模型按相同种子从头重训；新训练前12轮内部验证历史要求与原运行逐项精确一致，之后只按内部验证选择checkpoint。无旧测试评估。','',
-           '| 折 | 种子 | 复用 | 原开发MAE | 新开发MAE | 最佳epoch | 训练epoch数 |','| --- | ---: | --- | ---: | ---: | ---: | ---: |']
-    for r in record['results']:
-        lines.append(f"| {r['fold']} | {r['seed']} | {r['reused']} | {r['reference_mae_ppm']:.3f} | {r['metrics']['mae_ppm']:.3f} | {r['best_epoch']} | {len(r['history'])} |")
-    lines+=['',f"三折三种子单模型MAE均值：{np.mean([r['metrics']['mae_ppm'] for r in record['results']]):.3f} ppm。",'',
-            f"固定三种子平均预测的三折MAE均值：{np.mean([r['metrics']['mae_ppm'] for r in record['ensembles']]):.3f} ppm。",'',
-            '不挑选开发段表现最好的epoch或种子，结果可能在个别开发折变差。内部验证更低也不保证外部泛化。开发窗口已多次使用，仍需新增时间数据确认。', '',
-            f'来源哈希、完整指标、历史及预测/新权重在 `artifacts/forecasting/{run_id}/`；已早停权重来源见base_run。']
-    report.write_text('\n'.join(lines)+'\n');print('Report:',report,flush=True)
-    return output,report
+    # Reports are curated manually; machine-readable results stay with the run.
+    manifest_path = output / 'manifest.json'
+    print('Results:', manifest_path, flush=True)
+    return output, manifest_path

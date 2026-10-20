@@ -80,7 +80,7 @@
 - `data/real_co2_confirmation.csv`：确认期唯一目标时刻的五点真实浓度，空值保持空缺。
 - `data/provenance.json`：数据来源、哈希、日期范围与重算结果。
 - `scripts/`：可重复运行的绘图和指标导出脚本。
-- `STRUCTURE.md`：按codebase-design原则组织的文件结构。
+- `generate.py` 是总入口；`scripts/_figbase.py` 集中数据校验和绘图，单图脚本复用同一口径。
 
 ## 怎么重新生成
 
@@ -99,3 +99,7 @@ python generate.py
 来源：项目 `artifacts/forecasting/20261020T092656Z-confirmation-25df244e/predictions.npz` 与同目录 `manifest.json`。仅使用真实标签掩码内数据；已校验预测文件SHA-256，并重算总体MAE，与冻结报告一致。
 
 绘图使用 vivid-figures-skill 的风格与配方，目录结构采用 codebase-design。没有名称恰好为codebase-structure的本机skill。未估计预测置信区间，因此没有绘制置信带。数据只反映历史运行条件下的预测，不能证明改变阀门动作后的效果。
+
+## 检查记录
+
+已校验冻结NPZ哈希，重算总体、逐点及10/30/60分钟MAE与原manifest一致；已查看七张PNG与PDF渲染，检查文字及图例。第2图按固定午间时段修订，并核验其余六图文件哈希未变。图形布局规划保留在`PAPER_PLAN.md`，不再分散维护结构与检查报告。

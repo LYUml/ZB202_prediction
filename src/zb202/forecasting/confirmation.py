@@ -85,20 +85,8 @@ def confirm(root, protocol_path, snapshot):
                         actual_ppm=truth, observed_mask=mask, persistence_ppm=persistence)
     record['status'] = 'complete'
     record['outputs'] = {'predictions.npz': digest(output/'predictions.npz')}; save()
-    report = root/'reports/forecasting'/(output.name+'.md')
-    m, b = record['metrics'], record['persistence_metrics']
-    lines = ['# 冻结候选的新增时段确认', '',
-             f"原点UTC：{record['first_origin_utc']} 至 {record['last_origin_utc']}，共{len(origins)}个重叠窗口。真实数据；未重新训练或标准化。", '',
-             f"TCN固定三种子平均MAE {m['mae_ppm']:.3f} / RMSE {m['rmse_ppm']:.3f} ppm；持续值MAE {b['mae_ppm']:.3f} / RMSE {b['rmse_ppm']:.3f} ppm。MAE相对改善{record['mae_improvement_fraction']:.1%}。", '',
-             '| 香港日期（预测原点） | 原点数 | TCN MAE ppm | 持续值MAE ppm |',
-             '| --- | ---: | ---: | ---: |']
-    for row in record['daily']:
-        lines.append(f"| {row['origin_date_hk']} | {row['origins']} | {row['model']['mae_ppm']:.3f} | {row['persistence']['mae_ppm']:.3f} |")
-    lines += ['', f"TCN负预测{m['negative_predictions']}个；P99绝对误差{m['p99_abs_error_ppm']:.3f} ppm。完整逐点/时距/变化段指标见manifest。", '',
-              '先冻结原开发期最后一折已有三个TCN checkpoint、固定平均、时间截点，再只读导出新快照。没有按新数据选epoch、种子、权重或裁剪。历史上下文可以早于截点，全部未来标签箱在截点之后，排除导出时尚未结束的箱。', '',
-              '后续时段已在此次确认后暴露。约四天且窗口重叠，不能据此声称长期泛化、独立样本置信区间或真实控制有效。', '',
-              f'产物：`{output.relative_to(root)}`；协议哈希`{record["protocol_sha256"]}`。']
-    report.write_text('\n'.join(lines)+'\n')
-    print(report, flush=True)
+    # Reports are curated manually; machine-readable results stay with the run.
+    manifest_path = output / 'manifest.json'
+    print('Results:', manifest_path, flush=True)
     print(json.dumps({k: record[k] for k in ['origins', 'metrics', 'persistence_metrics', 'mae_improvement_fraction']}), flush=True)
-    return output, report
+    return output, manifest_path

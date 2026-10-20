@@ -91,16 +91,7 @@ def combine(root, config_path):
         save()
         print(f"{fold}: chosen TCN weight={weight}; seed mean MAE={record['results'][-3]['metrics']['mae_ppm']:.3f}; inner-weighted MAE={record['results'][-1]['metrics']['mae_ppm']:.3f}",flush=True)
     record['status']='complete';record['outputs']={p.name:digest(p) for p in output.iterdir() if p.name!='manifest.json'};save()
-    report=root/'reports/forecasting'/f'{run_id}.md'
-    lines=['# 冻结模型组合检查','',f'Run: `{run_id}`；不重训，只评估原前三个开发窗口。','',
-           '每折将42/43/44三个精简TCN的原始单位预测固定算术平均。比较纯TCN平均、固定50% Ridge混合、内部验证选择一个全局混合权重。候选权重0/0.25/0.5/0.75/1，作用于TCN，余量给Ridge。','',
-           '| 方法 | 开发平均MAE | 开发平均RMSE | P99均值 | 最大负预测数 |','| --- | ---: | ---: | ---: | ---: |']
-    for name in ['seed_mean','half_ridge','inner_weighted']:
-        rs=[r for r in record['results'] if r['model']==name]
-        lines.append(f"| {name} | {np.mean([r['metrics']['mae_ppm'] for r in rs]):.3f} | {np.mean([r['metrics']['rmse_ppm'] for r in rs]):.3f} | {np.mean([r['metrics']['p99_abs_error_ppm'] for r in rs]):.3f} | {max(r['metrics']['negative_predictions'] for r in rs)} |")
-    lines+=['','权重选择（仅内部验证）：','', '```json',json.dumps(record['calibration'],indent=2),'```','',
-            '同一内部验证段已用于选择基础网络epoch，再选择混合权重可能过拟合；外部开发指标不进入拟合，但开发窗口已多次使用，仍非独立最终测试。不得将种子模型平均MAE与平均预测的MAE混淆。','',
-            '参考：[Forecast combinations综述](https://arxiv.org/abs/2205.04216)。这里只采用简单平均与一维凸组合，未复现论文中的其他组合方法。','',
-            f'配置、校准结果、来源/产物哈希和预测保存在 `artifacts/forecasting/{run_id}/`。']
-    report.write_text('\n'.join(lines)+'\n'); print('Report:',report,flush=True)
-    return output,report
+    # Reports are curated manually; machine-readable results stay with the run.
+    manifest_path = output / 'manifest.json'
+    print('Results:', manifest_path, flush=True)
+    return output, manifest_path

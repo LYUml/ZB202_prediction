@@ -75,15 +75,7 @@ def compare_candidates(root,config_path):
             avg=np.mean(predictions,axis=0);record['ensembles'].append({'fold':fold,'model':kind,'metrics':summarize(avg,truth,mask,baseline)})
             np.savez_compressed(output/f'{fold}-{kind}-seed_mean.npz',predictions_ppm=avg);save()
     record['status']='complete';record['outputs']={p.name:digest(p) for p in output.iterdir() if p.is_file() and p.name!='manifest.json'};save()
-    report=root/'reports/forecasting'/f'{run_id}.md'
-    lines=['# 扩展模型开发比较','',f"Run: `{run_id}`；{len(record['folds'])}折、每模型{len(protocol['seeds'])}种子，{protocol['epochs']}轮上限，patience={protocol['patience']}。仅前70%开发时段。",'',
-           '| 模型 | 单模型MAE均值 | 固定种子平均MAE | 单模型RMSE均值 | 参数量 | 最佳epoch范围 |','| --- | ---: | ---: | ---: | ---: | --- |']
-    for spec in protocol['models']:
-        kind=spec['kind'];rows=[r for r in record['results'] if r['model']==kind];ens=[r for r in record['ensembles'] if r['model']==kind]
-        lines.append(f"| {kind} | {np.mean([r['metrics']['mae_ppm'] for r in rows]):.3f} | {np.mean([r['metrics']['mae_ppm'] for r in ens]):.3f} | {np.mean([r['metrics']['rmse_ppm'] for r in rows]):.3f} | {rows[0]['parameters']} | {min(r['best_epoch'] for r in rows)}–{max(r['best_epoch'] for r in rows)} |")
-    lines+=['',protocol.get('notes',''),'',
-            '每个模型的时距/点位/变化段/尾部指标和负值计数全部保留在manifest。所有模型都按内部验证选择checkpoint；不按开发集挑选最优种子。开发窗口已多次使用，不能称最终未见测试。','',
-            '方法定义与适配限制见配置及源码；本地候选成绩不代表论文原基准复现。','',
-            f'权重、预测、来源哈希及可执行源码快照：`artifacts/forecasting/{run_id}/`。']
-    report.write_text('\n'.join(lines)+'\n');print('Report:',report,flush=True)
-    return output,report
+    # Reports are curated manually; machine-readable results stay with the run.
+    manifest_path = output / 'manifest.json'
+    print('Results:', manifest_path, flush=True)
+    return output, manifest_path
