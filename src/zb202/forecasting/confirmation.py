@@ -10,7 +10,19 @@ from .data import digest, iso, prepare, sample_origins, SENSORS
 from .inference import FrozenForecaster
 
 
-def confirm(root, protocol_path, snapshot):
+def evaluation_start(cutoff, after_utc):
+    evaluation_cutoff = cutoff
+    if after_utc is not None:
+        parsed = datetime.fromisoformat(after_utc.replace('Z', '+00:00'))
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError('Evaluation cutoff requires an explicit timezone')
+        evaluation_cutoff = parsed.timestamp()
+        if evaluation_cutoff < cutoff:
+            raise ValueError('Evaluation cutoff cannot precede frozen protocol cutoff')
+    return evaluation_cutoff
+
+
+def confirm(root, protocol_path, snapshot, after_utc=None):
     root = Path(root); protocol_path = Path(protocol_path)
     protocol = json.loads(protocol_path.read_text())
     frozen = root/'artifacts/research/confirmation-freeze-20261020/protocol.json'
@@ -33,10 +45,11 @@ def confirm(root, protocol_path, snapshot):
     # Eligibility uses labels solely to exclude origins having no observed future label.
     origins = sample_origins(data, original_names, dict(cfg, train_fraction=1., validation_fraction=0.))[0]['train']
     cutoff = datetime.fromisoformat(protocol['after_utc'].replace('Z', '+00:00')).timestamp()
+    evaluation_cutoff = evaluation_start(cutoff, after_utc)
     raw_manifest = json.loads((root/snapshot/'manifest.json').read_text())
     stop = datetime.fromisoformat(raw_manifest['stop'].replace('Z', '+00:00')).timestamp()
     complete_end = np.floor(stop/cfg['step_seconds'])*cfg['step_seconds']
-    origins = origins[(data['timestamps'][origins] >= cutoff) &
+    origins = origins[(data['timestamps'][origins] >= evaluation_cutoff) &
                       (data['timestamps'][origins+cfg['horizon_steps']] <= complete_end)]
     if not len(origins):
         raise ValueError('No eligible later-time origins')
@@ -46,10 +59,12 @@ def confirm(root, protocol_path, snapshot):
                   raw_sha256=pm['raw_sha256'], processed=str(processed.relative_to(root)),
                   processed_manifest_sha256=digest(processed/'manifest.json'), aligned_sha256=pm['aligned_sha256'],
                   source_kind='real-later-time-unseen-at-freeze', origins=len(origins),
+                  evaluation_after_utc=iso(evaluation_cutoff),
+                  snapshot_stop_utc=raw_manifest['stop'],
                   first_origin_utc=iso(data['timestamps'][origins[0]]), last_origin_utc=iso(data['timestamps'][origins[-1]]),
                   code_sha256={p.name: digest(p) for p in sorted(Path(__file__).parent.glob('*.py'))},
                   limitations=['Retrospective new-time confirmation, not prospective live validation.',
-                               'About four days, overlapping windows; no independent-sample confidence claim.',
+                               'Overlapping windows; no independent-sample confidence claim.',
                                'Ingestion arrival times unavailable; causality relies on recorded timestamps.',
                                'No BA features or changed-action prediction, calibration or real control claim.',
                                'After reporting this period is exposed; later changes need another confirmation period.'])

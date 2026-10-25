@@ -12,6 +12,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', default='configs/forecasting/tcn.json')
     parser.add_argument('--run', default='artifacts/forecasting/20261018T131219Z-d95c977c')
     parser.add_argument('--snapshot', help='New raw snapshot, relative to project root; required for confirm')
+    parser.add_argument('--after-utc', help='Confirmation-only label-period cutoff with explicit timezone; cannot precede frozen cutoff')
     parser.add_argument('--processed', help='Aligned processed directory; required for predict')
     parser.add_argument('--output', help='New output JSON path; required for predict')
     parser.add_argument('--origin-utc', help='Optional aligned historical origin with explicit UTC offset')
@@ -27,7 +28,7 @@ if __name__ == '__main__':
         if not args.snapshot:
             parser.error('confirm requires --snapshot')
         from zb202.forecasting.confirmation import confirm
-        confirm(ROOT, path if args.config != 'configs/forecasting/tcn.json' else ROOT/'configs/forecasting/confirmation.json', args.snapshot)
+        confirm(ROOT, path if args.config != 'configs/forecasting/tcn.json' else ROOT/'configs/forecasting/confirmation.json', args.snapshot, args.after_utc)
     elif args.action == 'prepare':
         from zb202.forecasting.data import prepare
         print(prepare(ROOT, json.loads(path.read_text())))

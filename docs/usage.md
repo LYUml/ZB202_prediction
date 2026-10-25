@@ -29,6 +29,8 @@ python3 -m venv .venv
 .venv/bin/python scripts/forecast.py predict --processed data/processed/zb202_iot/2026-10-20T09-22-56.494Z/causal-v1-a91fe5205b53 --output artifacts/forecasting/my-forecast.json
 # 重现已完成的确认（该时段现已暴露；不是又获得一次独立测试）
 .venv/bin/python scripts/forecast.py confirm --snapshot data/raw/zb202_iot/2026-10-20T09-22-56.494Z
+# 后续新快照：只评价上次快照截点之后的新标签，冻结协议与权重保持不变
+.venv/bin/python scripts/forecast.py confirm --snapshot data/raw/zb202_iot/2026-10-25T10-09-23.957Z --after-utc 2026-10-20T09:22:56.495Z
 # 完整检查
 .venv/bin/python -m unittest discover -s tests -v
 ```
