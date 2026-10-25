@@ -2,7 +2,7 @@
 
 ZB202 房间 **CO₂ 短期预测与通风情景模拟**。根据过去 4 小时的真实历史，预测未来 1 小时五个点位的浓度；在明确假设下比较通风策略。
 
-当前方案为 **CO₂ 联合 TCN，三个固定种子预测取平均**。新增约四天确认期 MAE **6.57 ppm**，持续值对照 **8.32 ppm**。尚未标定真实风阀响应或接入设备控制。
+当前方案为 **CO₂ 联合 TCN，三个固定种子预测取平均**。已完成真实数据确认和外部数据稳健性检查；模型对偏移、尖峰和掉线仍有限制。尚未标定真实风阀响应或接入设备控制。
 
 ## 目录
 
@@ -27,7 +27,7 @@ ZB202 房间 **CO₂ 短期预测与通风情景模拟**。根据过去 4 小时
 | 阶段汇报 | [2026-10-20 report](<reports/2026-10-20 report.md>) |
 | 可视化 | [CO₂ 图册与读图说明](visualizations/co2_20261020/README.md) |
 | 使用与复现 | [安装、数据、预测、模拟及检查命令](docs/usage.md) |
-| 评估方法 | [评估协议](docs/forecasting-validation.md) · [消融协议](docs/forecasting-ablation.md) |
+| 评估方法 | [评估协议](docs/forecasting-validation.md) · [消融协议](docs/forecasting-ablation.md) · [稳健性验证](docs/forecasting-robustness.md) |
 | 建模说明 | [架构](docs/architecture.md) · [参数与假设](docs/assumptions.md) · [方法方案](docs/method-proposal.md) |
 | 数据 | [数据说明](data/README.md) · [处理数据](data/processed/zb202_iot/README.md) · [模拟数据](data/synthetic/README.md) |
 | 项目管理 | [项目计划](PROJECT_PLAN.md) · [聊天交接](HANDOFF.md) |

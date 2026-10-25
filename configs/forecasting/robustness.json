@@ -1,0 +1,111 @@
+{
+  "version": "robustness-v1",
+  "frozen_protocol": "configs/forecasting/confirmation.json",
+  "confirmation_run": "artifacts/forecasting/20261025T101021Z-confirmation-81f0913b",
+  "corruption_seeds": [
+    2026,
+    2027,
+    2028
+  ],
+  "training_seeds": [
+    42,
+    43,
+    44
+  ],
+  "external_model": {
+    "epochs": 24,
+    "patience": 3,
+    "channels": 32,
+    "kernel_size": 3,
+    "dilations": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "dropout": 0.1,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 128,
+    "lookback_steps": 48,
+    "horizon_steps": 12
+  },
+  "external_split_fractions": [
+    0.6,
+    0.75,
+    1.0
+  ],
+  "external_ridge_alpha": 10.0,
+  "scenarios": [
+    {
+      "kind": "clean"
+    },
+    {
+      "kind": "noise",
+      "sigma_ppm": 5
+    },
+    {
+      "kind": "noise",
+      "sigma_ppm": 20
+    },
+    {
+      "kind": "noise",
+      "sigma_ppm": 50
+    },
+    {
+      "kind": "bias",
+      "offset_ppm": 50
+    },
+    {
+      "kind": "bias",
+      "offset_ppm": -50
+    },
+    {
+      "kind": "single_sensor_bias",
+      "sensor": 4,
+      "offset_ppm": 100
+    },
+    {
+      "kind": "spikes",
+      "probability": 0.01,
+      "offset_ppm": 500
+    },
+    {
+      "kind": "missing",
+      "probability": 0.05
+    },
+    {
+      "kind": "missing",
+      "probability": 0.15
+    },
+    {
+      "kind": "missing",
+      "probability": 0.3
+    },
+    {
+      "kind": "periodic_outage",
+      "sensor": 4,
+      "period_steps": 12,
+      "duration_steps": 3
+    },
+    {
+      "kind": "sensor_outage",
+      "sensor": 4
+    },
+    {
+      "kind": "stale_current",
+      "age_seconds": 901
+    }
+  ],
+  "notes": [
+    "Protocol fixed before new stress or external forecast scores; no hyperparameter search or corruption-aware refit.",
+    "Existing local evaluation windows are exposed diagnostics, not new independent confirmation.",
+    "Frozen joint five-sensor model cannot be validly zero-shot evaluated on single-CO2 datasets. External evaluation tests a univariate TCN method and its source-to-target transfer, not the frozen deployment weights.",
+    "External datasets use only CO2; no occupancy labels or derived CO2 slope. Five-minute right-closed latest-observation bins, 900s causal freshness; no target filling or cross-gap interpolation.",
+    "External timestamps lack verified timezone. Calendar inputs fixed to zero; naive timestamps represented on a nominal epoch only for ordering and intervals.",
+    "Local input corruption never changes truth. Compare corrupted persistence and clean model on the identical accepted origins; report rejection/coverage separately.",
+    "Full history outages rejected by the current inference contract are failures of availability, not successful forecasts. No untested fallback is silently enabled.",
+    "All scenarios including adverse results are retained; no universal robustness threshold is claimed."
+  ],
+  "external_split_basis": "Rank of actually observed five-minute bins; boundaries on original unstitched grid, complete 12-step future labels required."
+}

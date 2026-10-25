@@ -1,0 +1,22 @@
+{
+  "landing_url": "https://archive.ics.uci.edu/dataset/864/room+occupancy+estimation",
+  "download_url": "https://archive.ics.uci.edu/static/public/864/room%2Boccupancy%2Bestimation.zip",
+  "doi": "10.24432/C5P605",
+  "citation": "Singh, A. & Chaudhari, S. (2018). Room Occupancy Estimation. UCI Machine Learning Repository.",
+  "license": "CC BY 4.0",
+  "co2_field": "S5_CO2",
+  "archive_sha256": "a0db79ee96ea297c22458ac77a28fba20d41246e75d24b2655ca3ab624cc08fd",
+  "rows": 10129,
+  "raw_files": {
+    "Occupancy_Estimation.csv": 10129
+  },
+  "nominal_first_time": "2017-12-22T10:49:41+00:00",
+  "nominal_last_time": "2018-01-11T09:00:09+00:00",
+  "co2_min_ppm": 345.0,
+  "co2_max_ppm": 1270.0,
+  "raw_max_gap_seconds": 1318547.0,
+  "grid_bins": 5739,
+  "observed_bins": 1054,
+  "timezone": "Unverified naive local time; nominal epoch only; calendar features disabled",
+  "retrieved_on": "2026-10-25"
+}

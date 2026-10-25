@@ -1,0 +1,24 @@
+{
+  "landing_url": "https://archive.ics.uci.edu/dataset/357/occupancy+detection",
+  "download_url": "https://archive.ics.uci.edu/static/public/357/occupancy%2Bdetection.zip",
+  "doi": "10.24432/C5X01N",
+  "citation": "Candanedo, L. (2016). Occupancy Detection. UCI Machine Learning Repository.",
+  "license": "CC BY 4.0",
+  "co2_field": "CO2",
+  "archive_sha256": "4ae3f46aa98eedff564a9f6924d1635173e2fd2c816004342a9be93076d3a81a",
+  "rows": 20560,
+  "raw_files": {
+    "datatest.txt": 2665,
+    "datatest2.txt": 9752,
+    "datatraining.txt": 8143
+  },
+  "nominal_first_time": "2015-02-02T14:19:00+00:00",
+  "nominal_last_time": "2015-02-18T09:19:00+00:00",
+  "co2_min_ppm": 412.75,
+  "co2_max_ppm": 2076.5,
+  "raw_max_gap_seconds": 105300.0,
+  "grid_bins": 4548,
+  "observed_bins": 4113,
+  "timezone": "Unverified naive local time; nominal epoch only; calendar features disabled",
+  "retrieved_on": "2026-10-25"
+}

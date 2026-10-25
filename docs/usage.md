@@ -31,6 +31,10 @@ python3 -m venv .venv
 .venv/bin/python scripts/forecast.py confirm --snapshot data/raw/zb202_iot/2026-10-20T09-22-56.494Z
 # 后续新快照：只评价上次快照截点之后的新标签，冻结协议与权重保持不变
 .venv/bin/python scripts/forecast.py confirm --snapshot data/raw/zb202_iot/2026-10-25T10-09-23.957Z --after-utc 2026-10-20T09:22:56.495Z
+# 稳健性：冻结模型输入压力测试、两套外部真实CO₂数据、双向迁移
+.venv/bin/python scripts/forecast.py robustness
+# 独立重算保存的误差、核对产物哈希，并生成validated-summary.json
+.venv/bin/python scripts/validation/inspect-robustness.py artifacts/forecasting/20261025T101857Z-robustness-2951db81
 # 完整检查
 .venv/bin/python -m unittest discover -s tests -v
 ```
@@ -84,3 +88,5 @@ python3 scripts/validation/inspect-export.py data/raw/zb202_iot/<snapshot>
 ## 输出与汇报约定
 
 训练、比较、消融、组合、预算检查和确认命令只保存本地实验产物，不自动写Markdown报告。对应Python入口返回`(运行目录, manifest.json路径)`；命令行会打印结果路径。`reports/`仅按用户要求维护`YYYY-MM-DD report.md`阶段汇报，同一阶段优先更新已有文件。
+
+稳健性方法、外部数据适配和结论边界见[稳健性验证](forecasting-robustness.md)。外部原始压缩包及来源清单在`data/raw/public/`，已随代码保存；本地压力测试仍需恢复冻结权重、确认运行和processed数据。新运行会写入新目录，独立校验时使用对应实际目录。

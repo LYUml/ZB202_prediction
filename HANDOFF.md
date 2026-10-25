@@ -1,6 +1,6 @@
 # 新聊天交接
 
-更新：2026-10-20。只记录继续工作所需信息；阶段状态见[项目路线](PROJECT_PLAN.md)，完整结果见[最终技术报告](<reports/2026-10-20 report.md>)。
+更新：2026-10-25。只记录继续工作所需信息；阶段状态见[项目路线](PROJECT_PLAN.md)，完整结果见[最终技术报告](<reports/2026-10-20 report.md>)。
 
 ## 先读
 
@@ -19,6 +19,13 @@
 - 无标签推理：`scripts/forecast.py predict`；最新示例`artifacts/forecasting/frozen-tcn-latest-20261020.json`。
 - 图册：`visualizations/co2_20261020/README.md`；当前第2图是固定午间三小时浓度/残差双面板。绘图环境依赖与入口见该目录说明。
 - 原始数据、processed、模型权重和研究审查产物保留在本地；权重等不随Git发布，新环境需恢复产物或按配置复现。
+
+## 稳健性进展
+
+- 本轮运行：`artifacts/forecasting/20261025T101857Z-robustness-2951db81/`，`validated-summary.json`保留完整汇总与136项产物/误差重算校验。方法和复现见`docs/forecasting-robustness.md`。
+- 原冻结模型轻微噪声耐受尚可，但全部传感器偏移50ppm时MAE约43–44ppm；随机缺测5%/15%时仅约78%/44%窗口可预测，单点持续掉线完全拒绝。拒绝不是预测成功。
+- 两套UCI真实CO₂数据均单通道；TCN单通道方法在UCI357比持续值差40.6%，UCI864好33.3%。不是原五点联合权重的直接跨楼宇验证。外部测试时段现已暴露，不按其结果调参。
+- 45项单元测试通过；本轮原始UCI数据及来源清单随Git保存，模型/预测/processed仍在本地artifacts等目录。
 
 ## 不应忘记的限制
 

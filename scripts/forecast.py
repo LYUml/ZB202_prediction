@@ -8,7 +8,7 @@ sys.path.insert(0, str(ROOT / 'src'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['prepare', 'train', 'diagnose', 'benchmark', 'ablate', 'combine', 'refine', 'compare', 'confirm', 'predict'])
+    parser.add_argument('action', choices=['prepare', 'train', 'diagnose', 'benchmark', 'ablate', 'combine', 'refine', 'compare', 'confirm', 'predict', 'robustness'])
     parser.add_argument('--config', default='configs/forecasting/tcn.json')
     parser.add_argument('--run', default='artifacts/forecasting/20261018T131219Z-d95c977c')
     parser.add_argument('--snapshot', help='New raw snapshot, relative to project root; required for confirm')
@@ -18,7 +18,10 @@ if __name__ == '__main__':
     parser.add_argument('--origin-utc', help='Optional aligned historical origin with explicit UTC offset')
     args = parser.parse_args()
     path = (ROOT / args.config).resolve()
-    if args.action == 'predict':
+    if args.action == 'robustness':
+        from zb202.forecasting.robustness import run_robustness
+        run_robustness(ROOT, path if args.config != 'configs/forecasting/tcn.json' else ROOT/'configs/forecasting/robustness.json')
+    elif args.action == 'predict':
         if not args.processed or not args.output:
             parser.error('predict requires --processed and --output')
         from zb202.forecasting.inference import forecast_latest
