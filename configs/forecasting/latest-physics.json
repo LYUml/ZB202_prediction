@@ -1,0 +1,19 @@
+{
+  "base_run": "artifacts/forecasting/20261102T132707Z-benchmark-6387ba79",
+  "features": "co2_only",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "epochs": 12,
+  "patience": 3,
+  "models": [
+    {
+      "kind": "relaxation",
+      "overrides": {}
+    }
+  ],
+  "notes": "Development-fold comparison of a single mass-balance-shaped relaxation forecast; latent rate/equilibrium are not measured or identified physical quantities, no model blending, reserve latest 10 percent. Runs on the two rolling folds only; third benchmark fold is an additional untouched development check.",
+  "development_end_fraction": 0.75
+}

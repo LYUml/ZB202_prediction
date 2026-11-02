@@ -34,3 +34,9 @@
 用户仅授权风阀20–40%模拟，风机固定60%。8.168m³/s为AHU总送风，房间分配未知，0.5m³/s是明确假设；没有同步BA动作历史、真实控制或能耗优化。用户不需要HongKong_Weather数据。
 
 `influxdb/.env`包含真实凭据，禁止显示或提交；导出只读`zb202_iot`。继续工作应先检查`git status`并保留用户未提交修改，不依赖交接中的旧提交号重置仓库。代码提交或远程推送按用户当次授权执行。
+
+## 2026-11-02 补充
+
+- 最新快照 `data/raw/zb202_iot/2026-11-02T13-25-47.919Z/`：1,240,019 条字段观测，服务器与本地计数一致；和 10 月 25 日快照重叠的 1,102,989 条按时间、measurement、field、value 比较一致。因果处理位于 `data/processed/zb202_iot/2026-11-02T13-25-47.919Z/causal-v1-7381ba7c18e8/`。
+- 新的单种子 TCN 候选及留出运行 `artifacts/forecasting/20261102T134205Z-latest-holdout-fd6d707f/`，MAE 9.064 vs 原冻结模型 9.438 ppm，但按日重采样的改善区间跨零，部分日期与 AM103_05 变差。该时段已暴露，原冻结模型仍是默认，候选需要新时段确认。详情、可复现命令及未采用的物理/patch 方法见 `docs/forecasting-validation.md` 与 `docs/usage.md`。
+- 冻结基线和候选的最新快照预测分别在 `artifacts/forecasting/frozen-tcn-latest-20261102.json` 和 `artifacts/forecasting/candidate-tcn-latest-20261102.json`；权重和派生产物不随 Git 发布，需保留或恢复。

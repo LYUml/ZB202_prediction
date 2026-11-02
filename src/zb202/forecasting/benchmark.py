@@ -17,6 +17,7 @@ from .features import build_inputs
 from .tcn import TCN, IndependentTCN
 from .linear import NLinear, DLinear, MaskAwareLinear
 from .structured import DecompositionStateRNN, RelaxationForecast
+from .patch_transformer import PatchTransformer
 from .windows import Windows
 
 
@@ -60,7 +61,8 @@ def build_model(kind, input_features, targets, cfg, norm=None):
     """Construct the same model for fitting and checkpoint inference."""
     factories = {'tcn': TCN, 'lstm': DirectLSTM, 'independent_tcn': IndependentTCN,
                  'nlinear': NLinear, 'dlinear': DLinear, 'mask_linear': MaskAwareLinear,
-                 'decomp_srnn': DecompositionStateRNN, 'relaxation': RelaxationForecast}
+                 'decomp_srnn': DecompositionStateRNN, 'relaxation': RelaxationForecast,
+                 'patch_transformer': PatchTransformer}
     if kind not in factories:
         raise ValueError('Unknown neural model: ' + kind)
     if kind == 'relaxation':

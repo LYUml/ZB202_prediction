@@ -90,3 +90,14 @@ python3 scripts/validation/inspect-export.py data/raw/zb202_iot/<snapshot>
 训练、比较、消融、组合、预算检查和确认命令只保存本地实验产物，不自动写Markdown报告。对应Python入口返回`(运行目录, manifest.json路径)`；命令行会打印结果路径。`reports/`仅按用户要求维护`YYYY-MM-DD report.md`阶段汇报，同一阶段优先更新已有文件。
 
 稳健性方法、外部数据适配和结论边界见[稳健性验证](forecasting-robustness.md)。外部原始压缩包及来源清单在`data/raw/public/`，已随代码保存；本地压力测试仍需恢复冻结权重、确认运行和processed数据。新运行会写入新目录，独立校验时使用对应实际目录。
+
+## 最新候选及独立核验
+
+本轮候选是单个 TCN，尚未经过未来新时段的前瞻确认；默认 `predict` 仍使用原冻结模型。恢复本地相应权重与 processed 后，可以运行：
+
+```sh
+.venv/bin/python scripts/validation/inspect-latest.py artifacts/forecasting/20261102T134205Z-latest-holdout-fd6d707f
+.venv/bin/python scripts/experiments/predict_candidate.py artifacts/forecasting/20261102T134205Z-latest-holdout-fd6d707f data/processed/zb202_iot/2026-11-02T13-25-47.919Z/causal-v1-7381ba7c18e8 artifacts/forecasting/my-candidate-forecast.json
+```
+
+输出文件必须是新文件。预测输入只读取历史 values/ages/timestamps，检查 checkpoint、处理数据和特征规则的哈希或一致性；不读取未来标签，也不代表改变风阀后的响应。具体结果和验证限制见[评估协议](forecasting-validation.md)。

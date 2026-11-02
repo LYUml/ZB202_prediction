@@ -1,0 +1,10 @@
+{
+  "benchmark": "artifacts/forecasting/20261102T132707Z-benchmark-6387ba79",
+  "benchmark_sha256": "7122e248a5e8ae22070fbee52b32bee47a67b2a41b26aa689f7cde4a2bfd4648",
+  "physics": "artifacts/forecasting/20261102T134136Z-candidates-c120d1cc",
+  "physics_sha256": "5fa426b53cec8617596d1adfc7c5a1108cd1abc6e4bb43fd3ddb09724b0e0b3d",
+  "kind": "tcn",
+  "seed": 42,
+  "selection_basis": "Across three development folds TCN has lower seed variability than LSTM and better mean MAE on the first two folds; LSTM is better on the third. Relaxation loses clearly on both tested folds. Seed 42 was specified before holdout assessment, no best seed selection.",
+  "holdout_caveat": "Final 10% was already exposed to frozen baseline and offline feedback evaluation; not a fully blind test."
+}

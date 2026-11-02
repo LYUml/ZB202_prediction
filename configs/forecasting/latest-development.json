@@ -1,0 +1,37 @@
+{
+  "base_config": "configs/forecasting/latest-tcn.json",
+  "processed": "data/processed/zb202_iot/2026-11-02T13-25-47.919Z/causal-v1-7381ba7c18e8",
+  "input_encoding": "safe-v2",
+  "feature_sets": [
+    "co2_only"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "epochs": 12,
+  "patience": 3,
+  "ridge_alpha": 10.0,
+  "fold_fractions": [
+    [
+      0.55,
+      0.6,
+      0.65
+    ],
+    [
+      0.65,
+      0.7,
+      0.75
+    ]
+  ],
+  "exposed_stress_fractions": [
+    0.75,
+    0.8,
+    0.9
+  ],
+  "exposed_stress_feature_sets": [
+    "co2_only"
+  ],
+  "notes": "Development-only comparison on latest data; final 10% remains reserved. Exposed-stress is a third development fold, not an independent test."
+}

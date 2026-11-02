@@ -21,7 +21,11 @@ def compare_candidates(root,config_path):
     if digest(processed/'aligned.npz')!=base['aligned_sha256'] or digest(processed/'manifest.json')!=base['processed_manifest_sha256']:
         raise ValueError('Processed source mismatch')
     if digest(root/cfg['snapshot']/'zb202_iot.csv.gz')!=base['raw_sha256']:raise ValueError('Raw source mismatch')
-    loaded=dict(np.load(processed/'aligned.npz'));n=len(loaded['timestamps']);end=int(n*.7)
+    loaded=dict(np.load(processed/'aligned.npz'));n=len(loaded['timestamps'])
+    development_end=protocol.get('development_end_fraction', .7)
+    if not 0 < development_end <= 1 or development_end < max(f[2] for f in base['protocol']['fold_fractions']):
+        raise ValueError('Development boundary must include all candidate folds')
+    end=int(n*development_end)
     data={k:v[:end] for k,v in loaded.items()};del loaded
     names=pm['feature_names'];torch.set_num_threads(4);torch.use_deterministic_algorithms(True)
     run_id=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-candidates-'+uuid4().hex[:8]

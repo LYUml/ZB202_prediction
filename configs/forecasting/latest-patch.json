@@ -1,0 +1,12 @@
+{
+  "base_run": "artifacts/forecasting/20261102T132707Z-benchmark-6387ba79",
+  "features": "co2_only",
+  "seeds": [42, 43, 44],
+  "epochs": 12,
+  "patience": 3,
+  "development_end_fraction": 0.75,
+  "models": [
+    {"kind": "patch_transformer", "overrides": {"patch_length": 8, "patch_stride": 4, "patch_width": 16}}
+  ],
+  "notes": "Small channel-shared patch Transformer inspired by PatchTST, not its reproduction. Compare only first two development folds with training-only normalization, same labels, three fixed seeds and internal early stopping. No new selection on already exposed final 10%."
+}
