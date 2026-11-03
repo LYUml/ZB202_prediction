@@ -1,35 +1,35 @@
 # ZB202 Prediction
 
-ZB202 房间 **CO₂ 短期预测与通风情景模拟**。根据过去 4 小时的真实历史，预测未来 1 小时五个点位的浓度；在明确假设下比较通风策略。
+Short-term **CO₂ forecasting and ventilation scenario simulation** for the ZB202 room. The project uses four hours of observed history to forecast CO₂ concentrations at five sensor locations over the next hour, and compares ventilation strategies under explicit assumptions.
 
-当前方案为 **CO₂ 联合 TCN，三个固定种子预测取平均**。已完成真实数据确认和外部数据稳健性检查；模型对偏移、尖峰和掉线仍有限制。尚未标定真实风阀响应或接入设备控制。
+The default forecasting model is a **joint CO₂ TCN**, averaging predictions from three fixed seeds. It has been evaluated on real data and tested for robustness using external datasets. Limitations remain around sensor offsets, spikes, and outages. The response to actual damper changes has not been calibrated, and the project is not connected to device controls.
 
-## 目录
+## Directory
 
 ```text
 .
-├── docs/                   使用方法、架构、假设与评估协议
-├── reports/                按日期整理的阶段汇报
-├── visualizations/         图册、绘图脚本与指标
-├── src/zb202/              预测、物理模型与模拟逻辑
-├── scripts/                命令行入口
-├── configs/                模型参数与模拟情景
-├── data/                   raw 原始 / processed 处理 / synthetic 模拟
-├── influxdb/               数据导出与核验工具
-├── requirements/           预测环境依赖
-└── tests/                  数据、预测与物理模型检查
+├── docs/                   Usage, architecture, assumptions, and evaluation protocols
+├── reports/                Dated progress reports
+├── visualizations/         Figures, plotting scripts, and metrics
+├── src/zb202/              Forecasting, physical models, and simulation logic
+├── scripts/                Command-line entry points
+├── configs/                Model parameters and simulation scenarios
+├── data/                   Raw, processed, and synthetic data
+├── influxdb/               Data export and verification tools
+├── requirements/           Forecasting environment dependencies
+└── tests/                  Data, forecasting, and physical model checks
 ```
 
-## 文档导航
+## Documentation
 
-| 分类 | 入口 |
+| Category | Links |
 | --- | --- |
-| 阶段汇报 | [2026-10-20 report](<reports/2026-10-20 report.md>) |
-| 可视化 | [CO₂ 图册与读图说明](visualizations/co2_20261020/README.md) |
-| 使用与复现 | [安装、数据、预测、模拟及检查命令](docs/usage.md) |
-| 评估方法 | [评估协议](docs/forecasting-validation.md) · [消融协议](docs/forecasting-ablation.md) · [稳健性验证](docs/forecasting-robustness.md) |
-| 建模说明 | [架构](docs/architecture.md) · [参数与假设](docs/assumptions.md) · [方法方案](docs/method-proposal.md) |
-| 数据 | [数据说明](data/README.md) · [处理数据](data/processed/zb202_iot/README.md) · [模拟数据](data/synthetic/README.md) |
-| 项目管理 | [项目计划](PROJECT_PLAN.md) · [聊天交接](HANDOFF.md) |
+| Progress reports | [2026-10-20 report](<reports/2026-10-20 report.md>) |
+| Visualizations | [CO₂ figures and reading guide](visualizations/co2_20261020/README.md) |
+| Usage and reproduction | [Installation, data, forecasting, simulation, and checks](docs/usage.md) |
+| Evaluation | [Validation protocol](docs/forecasting-validation.md) · [Ablation protocol](docs/forecasting-ablation.md) · [Robustness validation](docs/forecasting-robustness.md) |
+| Modeling | [Architecture](docs/architecture.md) · [Parameters and assumptions](docs/assumptions.md) · [Method proposal](docs/method-proposal.md) |
+| Data | [Data overview](data/README.md) · [Processed data](data/processed/zb202_iot/README.md) · [Synthetic data](data/synthetic/README.md) |
+| Project management | [Project plan](PROJECT_PLAN.md) · [Handoff](HANDOFF.md) |
 
-生成的模型权重、处理数据和模拟运行目录默认不纳入 Git；复现所需的本地产物与条件见使用文档。
+Generated model weights, processed data, and simulation run directories are excluded from Git by default. See the usage documentation for required local artifacts and reproduction conditions. Linked documentation is primarily in Chinese.
